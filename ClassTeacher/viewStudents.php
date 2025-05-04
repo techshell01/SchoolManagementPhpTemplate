@@ -96,10 +96,10 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
                     <thead class="thead-light">
                       <tr>
                         <th>#</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Other Name</th>
-                        <th>Admission No</th>
+                        <th>Student Name</th>
+                        <th>Phone No.</th>
+                        <th>Address</th>
+                        <th>Registration No.</th>
                         <th>Class</th>
                         <th>Class Arm</th>
                       </tr>
@@ -108,12 +108,12 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
                     <tbody>
 
                   <?php
-                      $query = "SELECT tblstudents.Id,tblclass.className,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblstudents.firstName,
-                      tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber,tblstudents.dateCreated
+                      $query = "SELECT tblstudents.Id,tblclass.className,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblstudents.studentName,
+                      tblstudents.regId,tblstudents.dateCreated,tblstudents.priPhoneNo,tblstudents.address
                       FROM tblstudents
                       INNER JOIN tblclass ON tblclass.Id = tblstudents.classId
-                      INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classArmId
-                      where tblstudents.classId = '$_SESSION[classId]' and tblstudents.classArmId = '$_SESSION[classArmId]'";
+                      INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classSecId
+                      where tblstudents.classId = '$_SESSION[classId]' and tblstudents.classSecId = '$_SESSION[classArmId]'";
                       $rs = $conn->query($query);
                       $num = $rs->num_rows;
                       $sn=0;
@@ -126,10 +126,10 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
                             echo"
                               <tr>
                                 <td>".$sn."</td>
-                                <td>".$rows['firstName']."</td>
-                                <td>".$rows['lastName']."</td>
-                                <td>".$rows['otherName']."</td>
-                                <td>".$rows['admissionNumber']."</td>
+                                <td>".$rows['studentName']."</td>
+                                <td>".$rows['priPhoneNo']."</td>
+                                <td>".$rows['address']."</td>
+                                <td>".$rows['regId']."</td>
                                 <td>".$rows['className']."</td>
                                 <td>".$rows['classArmName']."</td>
                               </tr>";

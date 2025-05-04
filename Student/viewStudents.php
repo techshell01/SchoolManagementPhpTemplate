@@ -108,12 +108,10 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
                     <tbody>
 
                   <?php
-                      $query = "SELECT tblstudents.Id,tblclass.className,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblstudents.firstName,
-                      tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber,tblstudents.dateCreated
-                      FROM tblstudents
-                      INNER JOIN tblclass ON tblclass.Id = tblstudents.classId
-                      INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classArmId
-                      where tblstudents.classId = '$_SESSION[classId]' and tblstudents.classArmId = '$_SESSION[classArmId]'";
+                  
+                      $query = "SELECT tblstudents.Id,tblclass.className,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblstudents.studentName, tblstudents.regId,tblstudents.dateCreated FROM tblstudents INNER JOIN tblclass ON tblclass.Id = tblstudents.classId INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classSecId
+                      where tblstudents.classId = '$_SESSION[classId]' and tblstudents.classSecId = '$_SESSION[classSecId]'";
+                      echo $query; die();
                       $rs = $conn->query($query);
                       $num = $rs->num_rows;
                       $sn=0;
