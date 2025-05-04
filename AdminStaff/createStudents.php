@@ -487,8 +487,8 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
       <input type="text" class="form-control" name="zone" value="<?php echo htmlspecialchars($row['zone'] ?? ''); ?>" required>
     </div>
     <div class="col-xl-6">
-  <label class="form-control-label">Second Language</label>
-  <select class="form-control" name="secLang">
+  <label class="form-control-label">Second Language</label><span class="text-danger">*</span></label>
+  <select class="form-control" name="secLang" required>
   <option value="" >-- Select Language --</option>
     <option value="Hindi" <?php echo (isset($row['secLang']) && $row['secLang'] == 'Hindi') ? 'selected' : ''; ?>>Hindi</option>
     <option value="Bengali" <?php echo (isset($row['secLang']) && $row['secLang'] == 'Bengali') ? 'selected' : ''; ?>>Bengali</option>
@@ -497,12 +497,12 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
   </div>
   <div class="form-group row mb-3">
   <div class="col-xl-6">
-  <label class="form-control-label">Date of Birth</label>
-  <input type="date" class="form-control" name="dob" value="<?php echo htmlspecialchars($row['dob'] ?? ''); ?>">
+  <label class="form-control-label">Date of Birth</label><span class="text-danger">*</span></label>
+  <input type="date" class="form-control" required name="dob" value="<?php echo htmlspecialchars($row['dob'] ?? ''); ?>">
 </div>
 <div class="col-xl-6">
-  <label class="form-control-label">Mode of Commute</label>
-  <select class="form-control" name="commute">
+  <label class="form-control-label">Mode of Commute</label><span class="text-danger">*</span></label>
+  <select class="form-control" name="commute" required>
     <option value="">-- Please select your mode of commute --</option>
     <option value="Walking" <?php echo (isset($row['commute']) && $row['commute'] == 'Walking') ? 'selected' : ''; ?>>On foot</option>
     <option value="Car" <?php echo (isset($row['commute']) && $row['commute'] == 'Car') ? 'selected' : ''; ?>>By car</option>
@@ -516,8 +516,8 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
 
   <div class="form-group row mb-3">
     <div class="col-xl-6">
-      <label class="form-control-label">Student Photo</label>
-      <input type="file" class="form-control-file" name="studentPhoto">
+      <label class="form-control-label">Student Photo</label><span class="text-danger">*</span></label>
+      <input type="file" class="form-control-file" name="studentPhoto" required>
       <?php if (!empty($row['studentPhoto'])): ?>
         <small>Current: <a href="uploads/<?php echo htmlspecialchars($row['studentPhoto']); ?>" target="_blank">View</a></small>
       <?php endif; ?>

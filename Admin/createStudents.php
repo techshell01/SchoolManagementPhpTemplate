@@ -14,8 +14,8 @@ if (isset($_POST['save'])) {
     $query = mysqli_query($conn, "SELECT max(regId) as maxRegId FROM tblstudents");
     $regVal = mysqli_fetch_array($query);
     $regIdVal = $regVal[0] +  1;
-    echo $regIdVal;
-    //die();
+    // echo $regIdVal;
+    // die();
 
   //echo $regId;
   
@@ -43,20 +43,37 @@ if (isset($_POST['save'])) {
       // Handle student photo upload
       $studentPhoto = '';
       if (!empty($_FILES['studentPhoto']['name'])) {
-          $targetDir = "Student/studentPhoto/";
-          $fileName = basename($_FILES["studentPhoto"]["name"]);
-          echo $fileName; 
-          $targetDir = "studentPhoto/";
-          $targetFilePath = $targetDir.$regIdVal."_".$fileName;
-          echo $targetFilePath;
-      
+        $targetDir = "../Student/studentPhoto/";
+        $fileName = basename($_FILES["studentPhoto"]["name"]);
+          $parts = explode('.', $fileName);
+        
+          $extension = end($parts);
+          // echo $extension; 
+      //  $targetDir = "studentPhoto/";
+        $fname = $regIdVal.".".$extension;
+        // echo $fname."<br>";
+        // die();
+        $targetFilePath = $targetDir.$regIdVal."_".$extension;
+          $targetFilePath = $targetDir . $fname;
+          // echo $targetFilePath."<br>";
+          // die() ;
           $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
 
           // Allow only specific file formats
           $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
-          if (in_array(strtolower($fileType), $allowTypes)) {
+          echo $fname."<br>";
+          // echo $targetFilePath."<br>";
+          if (in_array($fileType, $allowTypes)) {
               if (move_uploaded_file($_FILES["studentPhoto"]["tmp_name"], $targetFilePath)) {
-                  $studentPhoto = $targetFilePath;
+                if (!empty($row['studentPhoto']) && file_exists($row['studentPhoto'])) {
+                  unlink($row['studentPhoto']);
+              }
+              $studentPhoto = "studentPhoto/".$fname;
+              // $studentPhoto = $targetFilePath;
+
+               echo $studentPhoto."<br>";
+                echo $fname;
+                // die();
               }
           }
       }
@@ -79,10 +96,50 @@ VALUES (
       $query = mysqli_query($conn, $sql);
 
       if ($query) {
+
+       $showAlert = 1;
+       
+        $regId = '';
+        $regIdVal = '';
+     
+      $studentName = '';
+      $classId = '';
+      $classSecId = '';
+      $fatherName = '';
+      $motherName ='';
+      $priPhoneNo = '';
+      $secPhoneNo = '';
+      $address = '';
+      $zone = '';
+      $secLang = '';
+      $dob = '';
+      $commute = '';
+      $dateCreated = '';
+      echo "END OF INSERTION";
+       if ($showAlert) {
+       echo " <script>
+            Swal.fire({
+                title: 'Success!',
+                text: 'Form submitted successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        </script>";
+          }
+
+          
+
           $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Created Successfully!</div>";
+          $showAlert = 0;
+          // header("Location: " . $_SERVER['PHP_SELF']);
+          header("Location: " . $_SERVER['PHP_SELF'] . "?success=1");
+         
+
       } else {
           $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error occurred while inserting!</div>";
       }
+
+     
   }
 }
 //---------------------------------------SAVE-------------------------------------------------------------
@@ -109,7 +166,7 @@ if (isset($_GET['Id'], $_GET['action']) && $_GET['action'] == "edit") {
   // Update logic
   if (isset($_POST['update'])) {
       // Sanitize input
-      // $regId = mysqli_real_escape_string($conn, $_POST['regId']);
+      $regId = mysqli_real_escape_string($conn, $_POST['regId']);
       $studentName = mysqli_real_escape_string($conn, $_POST['studentName']);
       $classId = mysqli_real_escape_string($conn, $_POST['classId']);
       $classSecId = mysqli_real_escape_string($conn, $_POST['classSecId']);
@@ -128,9 +185,18 @@ if (isset($_GET['Id'], $_GET['action']) && $_GET['action'] == "edit") {
       $studentPhoto = $row['studentPhoto']; // Default: existing photo
 
       if (!empty($_FILES['studentPhoto']['name'])) {
-          $targetDir = "uploads/";
-          $fileName = time() . '_' . basename($_FILES["studentPhoto"]["name"]);
-          $targetFilePath = $targetDir . $fileName;
+        $targetDir = "../Student/studentPhoto/";
+        $fileName = basename($_FILES["studentPhoto"]["name"]);
+          $parts = explode('.', $fileName);
+        
+          $extension = end($parts);
+          // echo $extension; 
+      //  $targetDir = "studentPhoto/";
+        $fname = $regId.".".$extension;
+        // echo $fname;
+        // die();
+        $targetFilePath = $targetDir.$regIdVal."_".$extension;
+          $targetFilePath = $targetDir . $fname;
           $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
 
           $allowTypes = array('jpg', 'jpeg', 'png', 'gif');
@@ -141,7 +207,7 @@ if (isset($_GET['Id'], $_GET['action']) && $_GET['action'] == "edit") {
                   if (!empty($row['studentPhoto']) && file_exists($row['studentPhoto'])) {
                       unlink($row['studentPhoto']);
                   }
-                  $studentPhoto = $targetFilePath;
+                  $studentPhoto = "studentPhoto/".$fname;
               }
           }
       }
@@ -166,11 +232,27 @@ if (isset($_GET['Id'], $_GET['action']) && $_GET['action'] == "edit") {
       WHERE Id = '$Id'";
 
       if (mysqli_query($conn, $updateQuery)) {
-          echo "<script type='text/javascript'>
-              alert('Student updated successfully!');
-              window.location = 'createStudents.php';
-          </script>";
-          exit;
+          // echo "<script type='text/javascript'>
+          
+          //     alert('Student updated successfully!');
+          //     window.location = 'createStudents.php';
+          // </script>";
+          // exit;
+          header("Location: " . $_SERVER['PHP_SELF'] . "?update=1");
+
+
+
+          // echo "<script>
+          //               Swal.fire({
+          //                       title: 'Success!',
+          //                       text: 'Form submitted successfully DAta.',
+          //                       icon: 'success',
+          //                       confirmButtonText: 'OK'
+          //                   }).then(() => {
+          //                       // Remove query string without reloading
+          //                       window.history.replaceState({}, document.title, window.location.pathname);
+          //                   });
+          //               </script>";
       } else {
           echo "<div class='alert alert-danger'>Error updating student: " . mysqli_error($conn) . "</div>";
       }
@@ -226,7 +308,7 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
   <link href="css/ruang-admin.min.css" rel="stylesheet">
 
 
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
    <script>
     function classArmDropdown(str) {
     if (str == "") {
@@ -282,21 +364,58 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">Create Students</h6>
-                    <?php echo $statusMsg; ?>
+                    <?php echo $statusMsg;  ?>
+                    <?php if (isset($_GET['success'])){ ?>
+                   
+                      <script>
+                        Swal.fire({
+                                title: 'Success!',
+                                text: 'Form submitted successfully DAta.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                // Remove query string without reloading
+                                window.history.replaceState({}, document.title, window.location.pathname);
+                            });
+                        </script>
+                      <?php 
+                      header("Location: " . $_SERVER['PHP_SELF'] . "?success=0");
+                    
+                    } ?>
+
+<?php if (isset($_GET['update'])){ ?>
+                     
+                      <script>
+                        Swal.fire({
+                                title: 'Success!',
+                                text: 'Form submitted successfully update.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                // Remove query string without reloading
+                                window.history.replaceState({}, document.title, window.location.pathname);
+                            });
+                        </script>
+                      <?php 
+                      header("Location: " . $_SERVER['PHP_SELF'] . "?update=0");
+                    
+                    } ?>
+                    
+                   
                 </div>
                 <div class="card-body">
 
                 <form id="studentForm" method="post" enctype="multipart/form-data">
-  <!-- <div class="form-group row mb-3">
+  <div class="form-group row mb-3">
     <div class="col-xl-6">
-      <label class="form-control-label">Student ID</label>
-      <input type="text" class="form-control" name="Id" value="<?php echo htmlspecialchars($row['Id'] ?? ''); ?>" >
+      <!-- <label class="form-control-label">Student ID</label> -->
+      <input type="hidden" class="form-control" name="Id" value="<?php echo htmlspecialchars($row['Id'] ?? ''); ?>" >
     </div>
     <div class="col-xl-6">
-      <label class="form-control-label">Registration ID <span class="text-danger">*</span></label>
-      <input type="text" class="form-control" name="regId" value="<?php echo htmlspecialchars($row['regId'] ?? ''); ?>" required>
+      <!-- <label class="form-control-label">Registration ID <span class="text-danger">*</span></label> -->
+      <input type="hidden" class="form-control" name="regId" value="<?php echo htmlspecialchars($row['regId'] ?? ''); ?>" required>
     </div>
-  </div> -->
+  </div> 
 
   <div class="form-group row mb-3">
     <div class="col-xl-6">
@@ -368,8 +487,8 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
       <input type="text" class="form-control" name="zone" value="<?php echo htmlspecialchars($row['zone'] ?? ''); ?>" required>
     </div>
     <div class="col-xl-6">
-  <label class="form-control-label">Second Language</label>
-  <select class="form-control" name="secLang">
+  <label class="form-control-label">Second Language</label><span class="text-danger">*</span></label>
+  <select class="form-control" name="secLang" required>
   <option value="" >-- Select Language --</option>
     <option value="Hindi" <?php echo (isset($row['secLang']) && $row['secLang'] == 'Hindi') ? 'selected' : ''; ?>>Hindi</option>
     <option value="Bengali" <?php echo (isset($row['secLang']) && $row['secLang'] == 'Bengali') ? 'selected' : ''; ?>>Bengali</option>
@@ -378,12 +497,12 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
   </div>
   <div class="form-group row mb-3">
   <div class="col-xl-6">
-  <label class="form-control-label">Date of Birth</label>
-  <input type="date" class="form-control" name="dob" value="<?php echo htmlspecialchars($row['dob'] ?? ''); ?>">
+  <label class="form-control-label">Date of Birth</label><span class="text-danger">*</span></label>
+  <input type="date" class="form-control" required name="dob" value="<?php echo htmlspecialchars($row['dob'] ?? ''); ?>">
 </div>
 <div class="col-xl-6">
-  <label class="form-control-label">Mode of Commute</label>
-  <select class="form-control" name="commute">
+  <label class="form-control-label">Mode of Commute</label><span class="text-danger">*</span></label>
+  <select class="form-control" name="commute" required>
     <option value="">-- Please select your mode of commute --</option>
     <option value="Walking" <?php echo (isset($row['commute']) && $row['commute'] == 'Walking') ? 'selected' : ''; ?>>On foot</option>
     <option value="Car" <?php echo (isset($row['commute']) && $row['commute'] == 'Car') ? 'selected' : ''; ?>>By car</option>
@@ -397,8 +516,8 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
 
   <div class="form-group row mb-3">
     <div class="col-xl-6">
-      <label class="form-control-label">Student Photo</label>
-      <input type="file" class="form-control-file" name="studentPhoto">
+      <label class="form-control-label">Student Photo</label><span class="text-danger">*</span></label>
+      <input type="file" class="form-control-file" name="studentPhoto" required>
       <?php if (!empty($row['studentPhoto'])): ?>
         <small>Current: <a href="uploads/<?php echo htmlspecialchars($row['studentPhoto']); ?>" target="_blank">View</a></small>
       <?php endif; ?>
