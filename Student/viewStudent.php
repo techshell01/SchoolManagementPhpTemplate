@@ -96,19 +96,32 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
                     <thead class="thead-light">
                       <tr>
                         <th>#</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Other Name</th>
-                        <th>Admission No</th>
-                        <th>Class</th>
-                        <th>Class Arm 555</th>
+                        <th>Registration No.</th>
+                        <th>Student Name</th>
+                        <th>Class Name</th>
+                        <th>Class Section</th>
+                        <th>Student Photo</th>
+                        <th>Father's Name</th>
+                        <th>Mother's Name</th>
+                        <th>Primary Phone No.</th>
+                        <th>Secondary Phone No.</th>
+                        <th>Address</th>
+                        <th>Zone</th>
+                        <th>Second Language</th>
+                        <th>Date of Birth</th>
+                        <th>Mode of Commute</th>
                       </tr>
                     </thead>
                     
                     <tbody>
 
                   <?php
-                      $query = "SELECT tblstudents.Id,tblclass.className,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblstudents.studentName, tblstudents.regId,tblstudents.studentPhoto,tblstudents.dateCreated FROM tblstudents INNER JOIN tblclass ON tblclass.Id = tblstudents.classId INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classSecId
+                      // $query = "SELECT tblstudents.Id,tblclass.className,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblstudents.studentName, tblstudents.regId,tblstudents.studentPhoto,tblstudents.dateCreated 
+                      // FROM tblstudents INNER JOIN tblclass ON tblclass.Id = tblstudents.classId INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classSecId
+                      // where tblstudents.Id = '$_SESSION[userId]'";
+                      $query = "SELECT tblstudents.Id, tblclass.className,tblclassarms.classArmName,tblclassarms.Id, tblstudents.fatherName AS classArmId,tblstudents.studentName, 
+                      tblstudents.regId,tblstudents.studentPhoto,tblstudents.dateCreated, tblstudents.fatherName, tblstudents.motherName , tblstudents.priPhoneNo, tblstudents.secPhoneNo, tblstudents.address, tblstudents.zone, tblstudents.secLang, tblstudents.dob, tblstudents.commute 
+                      FROM tblstudents INNER JOIN tblclass ON tblclass.Id = tblstudents.classId INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classSecId
                       where tblstudents.Id = '$_SESSION[userId]'";
                       $rs = $conn->query($query);
                       $num = $rs->num_rows;
@@ -122,12 +135,20 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
                             echo"
                               <tr>
                                 <td>".$sn."</td>
-                                <td>".$rows['studentName']."</td>
                                 <td>".$rows['regId']."</td>
-                                <td>".$rows['studentPhoto']."</td>
-                                <td><img src=".$rows['studentPhoto']." width=\"100\" height=\"100\"/></td>
+                                <td>".$rows['studentName']."</td>
                                 <td>".$rows['className']."</td>
                                 <td>".$rows['classArmName']."</td>
+                                <td><img src=".$rows['studentPhoto']." width=\"100\" height=\"100\"/></td>
+                                <td>".$rows['fatherName']."</td>
+                                <td>".$rows['motherName']."</td>
+                                 <td>".$rows['priPhoneNo']."</td>
+                                  <td>".$rows['secPhoneNo']."</td>
+                                   <td>".$rows['address']."</td>
+                                    <td>".$rows['zone']."</td>
+                                    <td>".$rows['secLang']."</td>
+                                    <td>".$rows['dob']."</td>
+                                    <td>".$rows['commute']."</td>
                               </tr>";
                           }
                       }
