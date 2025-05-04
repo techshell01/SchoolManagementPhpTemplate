@@ -97,6 +97,31 @@
              </div>
          </div>
      </li>
+
+
+     
+     <hr class="sidebar-divider">
+     <div class="sidebar-heading">
+         Payments
+     </div>
+     <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBootstrapcon2"
+          aria-expanded="true" aria-controls="collapseBootstrapcon2">
+          <i class="fa fa-calendar-alt"></i>
+          <span>Payment Fees</span>
+        </a>
+        <div id="collapseBootstrapcon2" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Manage Payment</h6>
+            <a class="collapse-item" href="viewPaymentList.php">Payments Lists</a>
+            <!-- <a class="collapse-item" href="takeAttendance.php">Take Attendance</a>
+            <a class="collapse-item" href="viewAttendance.php">View Class Attendance</a>
+            <a class="collapse-item" href="viewStudentAttendance.php">View Student Attendance</a>
+            <a class="collapse-item" href="downloadRecord.php">Today's Report (xls)</a> -->
+            <!-- <a class="collapse-item" href="addMemberToContLevel.php ">Add Member to Level</a> -->
+          </div>
+        </div>
+      </li>
      <!-- <li class="nav-item">
         <a class="nav-link" href="forms.html">
           <i class="fab fa-fw fa-wpforms"></i>
