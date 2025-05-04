@@ -140,6 +140,7 @@ session_start();
 
       if($num > 0){
 
+        $_SESSION['regNum'] = '1001';
         $_SESSION['userId'] = $rows['Id'];
        // echo $_SESSION['Id'];die();
         $_SESSION['regId'] = $rows['regId'];

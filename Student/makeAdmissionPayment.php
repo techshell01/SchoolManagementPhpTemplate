@@ -30,9 +30,9 @@ if (isset($_POST['save'])) {
     if (in_array($fileType, $allowedTypes)) {
         if (move_uploaded_file($_FILES["paymentImage"]["tmp_name"], $targetFilePath)) {
             $query = mysqli_query($conn, "INSERT INTO payments 
-            (reg_num, first_name, last_name, class, session, amount, payment_type, month, status, photo,created_at)
+            (reg_num, first_name, last_name, class, session, amount, payment_type, status, photo,created_at)
             VALUES 
-            ('$regNum', '$first_name', '$last_name', '$class', '$session', '$amount', '$payment_type','$month', '$status', '$fileName', '$dateCreated')");
+            ('$regNum', '$first_name', '$last_name', '$class', '$session', '$amount', '$payment_type', '$status', '$fileName', '$dateCreated')");
 
             if ($query) {
                 $statusMsg = "<div class='alert alert-success'>Payment record created successfully!</div>";
@@ -268,12 +268,17 @@ if (isset($_POST['save'])) {
 
 
                     <div class="form-group row mb-3">
-                        <div class="col-xl-4">
+                        <!-- <div class="col-xl-4">
                         <label class="form-control-label">Paymemt Type<span class="text-danger ml-2">*</span></label>
-                        <input type="text" class="form-control" name="payment_type" readonly value="Monthly" id="exampleInputFirstName">
-                        </div>
-                    
+                        <input type="text" class="form-control" name="payment_type" value="<?php echo $row['payment_type'];?>" id="exampleInputFirstName" >
+                        </div> -->
                         <div class="col-xl-4">
+                        <label class="form-control-label">Payment Type<span class="text-danger ml-2">*</span></label>
+                        <input type="text" class="form-control" name="payment_type" readonly value="Admission" id="exampleInputFirstName">
+                      </div>
+
+                    
+                        <!-- <div class="col-xl-4">
                         <label for="month">Choose a month <span class="text-danger ml-2">*</span></label>
                           <select name="month" id="month" class="form-control mb-3">
                           <option value="">--Select month--</option>
@@ -290,7 +295,7 @@ if (isset($_POST['save'])) {
                             <option value="November">November</option>
                             <option value="December">December</option>
                           </select>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div class="col-xl-4">
