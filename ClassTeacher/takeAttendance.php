@@ -30,7 +30,7 @@ include '../Includes/session.php';
           $qus=mysqli_query($conn,"select * from tblstudents  where classId = '$_SESSION[classId]' and classSecId = '$_SESSION[classArmId]'");
           while ($ros = $qus->fetch_assoc())
           {
-              $qquery=mysqli_query($conn,"insert into tblattendance(regId,classId,classArmId,sessionTermId,status,dateTimeTaken) 
+              $qquery=mysqli_query($conn,"insert into tblattendance(admissionNo,classId,classArmId,sessionTermId,status,dateTimeTaken) 
               value('$ros[regId]','$_SESSION[classId]','$_SESSION[classArmId]','$sessionTermId','0','$dateTaken')");
 
           }
@@ -43,17 +43,19 @@ include '../Includes/session.php';
 
 if(isset($_POST['save'])){
     
-    $regId=$_POST['regId'];
+  $admissionNo=$_POST['admissionNo'];
 
-    $check=$_POST['check'];
-    $N = count($regId);
-    $status = "";
+  $check=$_POST['check'];
+  $N = count($admissionNo);
+  
+
+  $status = "";
 
 
 //check if the attendance has not been taken i.e if no record has a status of 1
   $qurty=mysqli_query($conn,"select * from tblattendance  where classId = '$_SESSION[classId]' and classArmId = '$_SESSION[classArmId]' and dateTimeTaken='$dateTaken' and status = '1'");
   $count = mysqli_num_rows($qurty);
-
+  
   if($count > 0){
 
       $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Attendance has been taken for today!</div>";
@@ -65,11 +67,13 @@ if(isset($_POST['save'])){
 
         for($i = 0; $i < $N; $i++)
         {
-                $regId[$i]; //admission Number
-
+                $admissionNo[$i]; //admission Number
+                // echo $check[$i];
+                // die();
+                
                 if(isset($check[$i])) //the checked checkboxes
                 {
-                      $qquery=mysqli_query($conn,"update tblattendance set status='1' where regId = '$check[$i]'");
+                      $qquery=mysqli_query($conn,"update tblattendance set status='1' where admissionNo = '$check[$i]'");
 
                       if ($qquery) {
 
@@ -174,12 +178,12 @@ if(isset($_POST['save'])){
                     <thead class="thead-light">
                       <tr>
                         <th>#</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Other Name</th>
-                        <th>Admission No</th>
+                        <th>Student Name</th>
+                        <th>Phone No</th>
+                        <th>Address</th>
+                        <th>Registration Id</th>
                         <th>Class</th>
-                        <th>Class Arm</th>
+                        <th>Class Sec</th>
                         <th>Check</th>
                       </tr>
                     </thead>
@@ -187,7 +191,7 @@ if(isset($_POST['save'])){
                     <tbody>
 
                   <?php
-                      $query = "SELECT tblstudents.Id,tblstudents.admissionNumber,tblclass.className,tblclass.Id As classId,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblstudents.studentName,
+                      $query = "SELECT tblstudents.Id,tblclass.className,tblclass.Id As classId,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblstudents.studentName,
                       tblstudents.regId,tblstudents.dateCreated,tblstudents.priPhoneNo,tblstudents.address 
                       FROM tblstudents
                       INNER JOIN tblclass ON tblclass.Id = tblstudents.classId
@@ -210,10 +214,10 @@ if(isset($_POST['save'])){
                                 <td>".$rows['address']."</td>
                                 <td>".$rows['regId']."</td>
                                 <td>".$rows['className']."</td>
-                                <td>".$rows['classSecName']."</td>
+                                <td>".$rows['classArmName']."</td>
                                 <td><input name='check[]' type='checkbox' value=".$rows['regId']." class='form-control'></td>
                               </tr>";
-                              echo "<input name='regId[]' value=".$rows['admissionNumber']." type='hidden' class='form-control'>";
+                              echo "<input name='admissionNo[]' value=".$rows['regId']." type='hidden' class='form-control'>";
                           }
                       }
                       else
