@@ -46,7 +46,7 @@
             <h6 class="collapse-header">Manage Payment</h6>
             <a class="collapse-item" href="makeAdmissionPayment.php">Make Admission Payment</a>
             <a class="collapse-item" href="makePayment.php">Make Monthly Payment</a>
-            <a class="collapse-item" href="viewStudents.php">Payment History</a>
+            <a class="collapse-item" href="paymentHistory.php">Payment History</a>
             <!-- <a class="collapse-item" href="takeAttendance.php">Take Attendance</a>
             <a class="collapse-item" href="viewAttendance.php">View Class Attendance</a>
             <a class="collapse-item" href="viewStudentAttendance.php">View Student Attendance</a>
