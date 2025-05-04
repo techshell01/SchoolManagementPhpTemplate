@@ -46,7 +46,7 @@ include '../Includes/session.php';
         <!-- Container Fluid-->
         <div class="container-fluid" id="container-wrapper">
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800"> <?php echo $_SESSION['firstName'].' - '.$_SESSION['lastName'];?></h1>
+            <h1 class="h3 mb-0 text-gray-800"> <?php echo $_SESSION['studentName'];?></h1>
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="./">Home</a></li>
               <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
@@ -56,7 +56,7 @@ include '../Includes/session.php';
           <div class="row mb-3">
           <!-- New User Card Example -->
           <?php 
-$query1=mysqli_query($conn,"SELECT * from tblstudents where classId = '$_SESSION[classId]' and classArmId = '$_SESSION[classArmId]'");                       
+$query1=mysqli_query($conn,"SELECT * from tblstudents where classId = '$_SESSION[classId]' and classSecId = '$_SESSION[classSecId]'");                       
 $students = mysqli_num_rows($query1);
 ?>
             <div class="col-xl-3 col-md-6 mb-4">
@@ -129,7 +129,7 @@ $classArms = mysqli_num_rows($query1);
             
             <!-- Pending Requests Card Example -->
             <?php 
-$query1=mysqli_query($conn,"SELECT * from tblattendance where classId = '$_SESSION[classId]' and classArmId = '$_SESSION[classArmId]'");                       
+$query1=mysqli_query($conn,"SELECT * from tblattendance where classId = '$_SESSION[classId]' and classArmId = '$_SESSION[classSecId]'");                       
 $totAttendance = mysqli_num_rows($query1);
 ?>
             <div class="col-xl-3 col-md-6 mb-4">

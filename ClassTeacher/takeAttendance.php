@@ -27,11 +27,11 @@ include '../Includes/session.php';
         if($count == 0){ //if Record does not exsit, insert the new record
 
           //insert the students record into the attendance table on page load
-          $qus=mysqli_query($conn,"select * from tblstudents  where classId = '$_SESSION[classId]' and classArmId = '$_SESSION[classArmId]'");
+          $qus=mysqli_query($conn,"select * from tblstudents  where classId = '$_SESSION[classId]' and classSecId = '$_SESSION[classArmId]'");
           while ($ros = $qus->fetch_assoc())
           {
-              $qquery=mysqli_query($conn,"insert into tblattendance(admissionNo,classId,classArmId,sessionTermId,status,dateTimeTaken) 
-              value('$ros[admissionNumber]','$_SESSION[classId]','$_SESSION[classArmId]','$sessionTermId','0','$dateTaken')");
+              $qquery=mysqli_query($conn,"insert into tblattendance(regId,classId,classArmId,sessionTermId,status,dateTimeTaken) 
+              value('$ros[regId]','$_SESSION[classId]','$_SESSION[classArmId]','$sessionTermId','0','$dateTaken')");
 
           }
         }
@@ -43,10 +43,10 @@ include '../Includes/session.php';
 
 if(isset($_POST['save'])){
     
-    $admissionNo=$_POST['admissionNo'];
+    $regId=$_POST['regId'];
 
     $check=$_POST['check'];
-    $N = count($admissionNo);
+    $N = count($regId);
     $status = "";
 
 
@@ -65,11 +65,11 @@ if(isset($_POST['save'])){
 
         for($i = 0; $i < $N; $i++)
         {
-                $admissionNo[$i]; //admission Number
+                $regId[$i]; //admission Number
 
                 if(isset($check[$i])) //the checked checkboxes
                 {
-                      $qquery=mysqli_query($conn,"update tblattendance set status='1' where admissionNo = '$check[$i]'");
+                      $qquery=mysqli_query($conn,"update tblattendance set status='1' where regId = '$check[$i]'");
 
                       if ($qquery) {
 
@@ -187,12 +187,12 @@ if(isset($_POST['save'])){
                     <tbody>
 
                   <?php
-                      $query = "SELECT tblstudents.Id,tblstudents.admissionNumber,tblclass.className,tblclass.Id As classId,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblstudents.firstName,
-                      tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber,tblstudents.dateCreated
+                      $query = "SELECT tblstudents.Id,tblstudents.admissionNumber,tblclass.className,tblclass.Id As classId,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblstudents.studentName,
+                      tblstudents.regId,tblstudents.dateCreated,tblstudents.priPhoneNo,tblstudents.address 
                       FROM tblstudents
                       INNER JOIN tblclass ON tblclass.Id = tblstudents.classId
-                      INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classArmId
-                      where tblstudents.classId = '$_SESSION[classId]' and tblstudents.classArmId = '$_SESSION[classArmId]'";
+                      INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classSecId
+                      where tblstudents.classId = '$_SESSION[classId]' and tblstudents.classSecId = '$_SESSION[classArmId]'";
                       $rs = $conn->query($query);
                       $num = $rs->num_rows;
                       $sn=0;
@@ -205,15 +205,15 @@ if(isset($_POST['save'])){
                             echo"
                               <tr>
                                 <td>".$sn."</td>
-                                <td>".$rows['firstName']."</td>
-                                <td>".$rows['lastName']."</td>
-                                <td>".$rows['otherName']."</td>
-                                <td>".$rows['admissionNumber']."</td>
+                                <td>".$rows['studentName']."</td>
+                                <td>".$rows['priPhoneNo']."</td>
+                                <td>".$rows['address']."</td>
+                                <td>".$rows['regId']."</td>
                                 <td>".$rows['className']."</td>
-                                <td>".$rows['classArmName']."</td>
-                                <td><input name='check[]' type='checkbox' value=".$rows['admissionNumber']." class='form-control'></td>
+                                <td>".$rows['classSecName']."</td>
+                                <td><input name='check[]' type='checkbox' value=".$rows['regId']." class='form-control'></td>
                               </tr>";
-                              echo "<input name='admissionNo[]' value=".$rows['admissionNumber']." type='hidden' class='form-control'>";
+                              echo "<input name='regId[]' value=".$rows['admissionNumber']." type='hidden' class='form-control'>";
                           }
                       }
                       else

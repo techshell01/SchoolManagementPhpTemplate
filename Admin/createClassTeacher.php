@@ -1,8 +1,8 @@
-
 <?php 
 error_reporting(0);
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
+
 
 //------------------------SAVE--------------------------------------------------
 
@@ -16,39 +16,53 @@ if(isset($_POST['save'])){
   $classId=$_POST['classId'];
   $classArmId=$_POST['classArmId'];
   $dateCreated = date("Y-m-d");
+  $address=$_POST['address'];
+  $qualification=$_POST['qualification'];
    
-    $query=mysqli_query($conn,"select * from tblclassteacher where emailAddress ='$emailAddress'");
-    $ret=mysqli_fetch_array($query);
+   	$query=mysqli_query($conn,"select * from tblclassteacher where emailAddress ='$emailAddress'");
+		$ret=mysqli_fetch_array($query);
 
-    $sampPass = "pass123";
-    $sampPass_2 = md5($sampPass);
+		$sampPass = "pass123";
+		$sampPass_2 = md5($sampPass);
 
-    if($ret > 0){ 
-
-        $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>This Email Address Already Exists!</div>";
-    }
-    else{
-
-    $query=mysqli_query($conn,"INSERT into tblclassteacher(firstName,lastName,emailAddress,password,phoneNo,classId,classArmId,dateCreated) 
-    value('$firstName','$lastName','$emailAddress','$sampPass_2','$phoneNo','$classId','$classArmId','$dateCreated')");
-
-    if ($query) {
+      if ($ret > 0) {
+        $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>This Registration ID Already Exists!</div>";
+    } else {
+        // Handle student photo upload
+        $teacherPhoto = '';
+        if (!empty($_FILES['teacherPhoto']['name'])) {
+            $targetDir = "teacherPhoto/";
+            $fileName = basename($_FILES["teacherPhoto"]["name"]);
+            //echo $fileName; 
+           // die();
+            $targetDir = "teacherPhoto/";
+            $targetFilePath = $targetDir.time()."_".$fileName;
+          //  echo $targetFilePath;
+         //   die();
         
-        $qu=mysqli_query($conn,"update tblclassarms set isAssigned='1' where Id ='$classArmId'");
-            if ($qu) {
-                
-                $statusMsg = "<div class='alert alert-success'  style='margin-right:700px;'>Created Successfully!</div>";
+            $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
+  
+            // Allow only specific file formats
+            $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+            if (in_array(strtolower($fileType), $allowTypes)) {
+                if (move_uploaded_file($_FILES["teacherPhoto"]["tmp_name"], $targetFilePath)) {
+                    $teacherPhoto = $targetFilePath;
+                }
             }
-            else
-            {
-                $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error Occurred!</div>";
-            }
+        }
+        $sql = "INSERT INTO tblclassteacher(firstName, lastName, emailAddress,password,phoneNo,classId,classArmId, dateCreated, address, qualification, teacherPhoto) VALUES (
+          '$firstName', '$lastName', '$emailAddress','$sampPass_2','$phoneNo','$classId','$classArmId', '$dateCreated', '$address',  '$qualification','$teacherPhoto')";
+  // echo $sql;
+  // die();
+        
+        $query = mysqli_query($conn, $sql);
+  
+        if ($query) {
+            $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Created Successfully!</div>";
+        } else {
+            $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error occurred while inserting!</div>";
+        }
     }
-    else
-    {
-         $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error Occurred!</div>";
-    }
-  }
 }
 
 //---------------------------------------EDIT-------------------------------------------------------------
@@ -74,14 +88,17 @@ if(isset($_POST['save'])){
              $firstName=$_POST['firstName'];
               $lastName=$_POST['lastName'];
               $emailAddress=$_POST['emailAddress'];
+              $address=$_POST['address'];
+              $qualification=$_POST['qualification'];
 
               $phoneNo=$_POST['phoneNo'];
               $classId=$_POST['classId'];
               $classArmId=$_POST['classArmId'];
               $dateCreated = date("Y-m-d");
+             
 
     $query=mysqli_query($conn,"update tblclassteacher set firstName='$firstName', lastName='$lastName',
-    emailAddress='$emailAddress', password='$password',phoneNo='$phoneNo', classId='$classId',classArmId='$classArmId'
+    emailAddress='$emailAddress', address='$address',qualification='$qualification',password='$password',phoneNo='$phoneNo', classId='$classId',classArmId='$classArmId'
     where Id='$Id'");
             if ($query) {
                 
@@ -202,7 +219,7 @@ if(isset($_POST['save'])){
                     <?php echo $statusMsg; ?>
                 </div>
                 <div class="card-body">
-                  <form method="post">
+                  <form method="post" enctype="multipart/form-data">
                    <div class="form-group row mb-3">
                         <div class="col-xl-6">
                         <label class="form-control-label">Firstname<span class="text-danger ml-2">*</span></label>
@@ -216,11 +233,11 @@ if(isset($_POST['save'])){
                     <div class="form-group row mb-3">
                         <div class="col-xl-6">
                         <label class="form-control-label">Address<span class="text-danger ml-2">*</span></label>
-                        <textarea class="form-control" required name="address" value="<?php echo $row['emailAddress'];?>" id="address" ></textarea>
+                        <textarea class="form-control" required name="address" value="" id="address" ><?php echo $row['address'];?></textarea>
                         </div>
                         <div class="col-xl-6">
                         <label class="form-control-label">Qualification<span class="text-danger ml-2">*</span></label>
-                      <input type="text" class="form-control" name="qualification" value="<?php echo $row['phoneNo'];?>" id="qualification" >
+                      <input type="text" class="form-control" name="qualification" value="<?php echo $row['qualification'];?>" id="qualification" >
                         </div>
                     </div>
                      <div class="form-group row mb-3">
@@ -257,6 +274,13 @@ if(isset($_POST['save'])){
                             ?>
                         </div>
                     </div>
+                      <div class="form-group row mb-3">
+                        <div class="col-xl-6">
+                          <label class="form-control-label">Select File to Upload<span class="text-danger ml-2">*</span></label>
+                          <input type="file" name="teacherPhoto" required>
+                        </div>
+                      </div>
+             
                       <?php
                     if (isset($Id))
                     {
@@ -290,9 +314,12 @@ if(isset($_POST['save'])){
                         <th>Last Name</th>
                         <th>Email Address</th>
                         <th>Phone No</th>
+                        <th>Address</th>
+                        <th>Qualification</th>
                         <th>Class</th>
                         <th>Class Arm</th>
                         <th>Date Created</th>
+                        <th>Edit</th>
                         <th>Delete</th>
                       </tr>
                     </thead>
@@ -301,7 +328,7 @@ if(isset($_POST['save'])){
 
                   <?php
                       $query = "SELECT tblclassteacher.Id,tblclass.className,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblclassteacher.firstName,
-                      tblclassteacher.lastName,tblclassteacher.emailAddress,tblclassteacher.phoneNo,tblclassteacher.dateCreated
+                      tblclassteacher.lastName,tblclassteacher.emailAddress,tblclassteacher.phoneNo,tblclassteacher.dateCreated,tblclassteacher.address,tblclassteacher.qualification
                       FROM tblclassteacher
                       INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
                       INNER JOIN tblclassarms ON tblclassarms.Id = tblclassteacher.classArmId";
@@ -321,9 +348,12 @@ if(isset($_POST['save'])){
                                 <td>".$rows['lastName']."</td>
                                 <td>".$rows['emailAddress']."</td>
                                 <td>".$rows['phoneNo']."</td>
+                                 <td>".$rows['address']."</td>
+                                <td>".$rows['qualification']."</td>
                                 <td>".$rows['className']."</td>
                                 <td>".$rows['classArmName']."</td>
                                  <td>".$rows['dateCreated']."</td>
+                                <td><a href='?action=edit&Id=".$rows['Id']."'><i class='fas fa-fw fa-edit'></i></a></td>
                                 <td><a href='?action=delete&Id=".$rows['Id']."&classArmId=".$rows['classArmId']."'><i class='fas fa-fw fa-trash'></i></a></td>
                               </tr>";
                           }

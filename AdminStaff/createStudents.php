@@ -4,44 +4,145 @@ error_reporting(0);
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
+
 //------------------------SAVE--------------------------------------------------
 
-if(isset($_POST['save'])){
-    
-    $firstName=$_POST['firstName'];
-  $lastName=$_POST['lastName'];
-  $otherName=$_POST['otherName'];
+if (isset($_POST['save'])) {
+  // Fetch form values
+  $regId = $_POST['regId'];
+    // Check for duplicates
+    $query = mysqli_query($conn, "SELECT max(regId) as maxRegId FROM tblstudents");
+    $regVal = mysqli_fetch_array($query);
+    $regIdVal = $regVal[0] +  1;
+    // echo $regIdVal;
+    // die();
 
-  $admissionNumber=$_POST['admissionNumber'];
-  $classId=$_POST['classId'];
-  $classArmId=$_POST['classArmId'];
+  //echo $regId;
+  
+  $studentName = $_POST['studentName'];
+  $classId = $_POST['classId'];
+  $classSecId = $_POST['classSecId'];
+  $fatherName = $_POST['fatherName'];
+  $motherName = $_POST['motherName'];
+  $priPhoneNo = $_POST['priPhoneNo'];
+  $secPhoneNo = $_POST['secPhoneNo'];
+  $address = $_POST['address'];
+  $zone = $_POST['zone'];
+  $secLang = $_POST['secLang'];
+  $dob = $_POST['dob'];
+  $commute = $_POST['commute'];
   $dateCreated = date("Y-m-d");
-   
-    $query=mysqli_query($conn,"select * from tblstudents where admissionNumber ='$admissionNumber'");
-    $ret=mysqli_fetch_array($query);
 
-    if($ret > 0){ 
+  // Check for duplicates
+  $query = mysqli_query($conn, "SELECT * FROM tblstudents WHERE regId = '$regIdVal'");
+  $ret = mysqli_fetch_array($query);
 
-        $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>This Email Address Already Exists!</div>";
-    }
-    else{
-
-    $query=mysqli_query($conn,"insert into tblstudents(firstName,lastName,otherName,admissionNumber,password,classId,classArmId,dateCreated) 
-    value('$firstName','$lastName','$otherName','$admissionNumber','12345','$classId','$classArmId','$dateCreated')");
-
-    if ($query) {
+  if ($ret > 0) {
+      $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>This Registration ID Already Exists!</div>";
+  } else {
+      // Handle student photo upload
+      $studentPhoto = '';
+      if (!empty($_FILES['studentPhoto']['name'])) {
+        $targetDir = "../Student/studentPhoto/";
+        $fileName = basename($_FILES["studentPhoto"]["name"]);
+          $parts = explode('.', $fileName);
         
-        $statusMsg = "<div class='alert alert-success'  style='margin-right:700px;'>Created Successfully!</div>";
-            
-    }
-    else
-    {
-         $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error Occurred!</div>";
-    }
+          $extension = end($parts);
+          // echo $extension; 
+      //  $targetDir = "studentPhoto/";
+        $fname = $regIdVal.".".$extension;
+        // echo $fname."<br>";
+        // die();
+        $targetFilePath = $targetDir.$regIdVal."_".$extension;
+          $targetFilePath = $targetDir . $fname;
+          // echo $targetFilePath."<br>";
+          // die() ;
+          $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
+
+          // Allow only specific file formats
+          $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+          echo $fname."<br>";
+          // echo $targetFilePath."<br>";
+          if (in_array($fileType, $allowTypes)) {
+              if (move_uploaded_file($_FILES["studentPhoto"]["tmp_name"], $targetFilePath)) {
+                if (!empty($row['studentPhoto']) && file_exists($row['studentPhoto'])) {
+                  unlink($row['studentPhoto']);
+              }
+              $studentPhoto = "studentPhoto/".$fname;
+              // $studentPhoto = $targetFilePath;
+
+               echo $studentPhoto."<br>";
+                echo $fname;
+                // die();
+              }
+          }
+      }
+// echo $regIdVal."<br>";
+//die();
+      $defaultPassword = md5('12345');
+      $sql = "INSERT INTO tblstudents( 
+    `regId`, `studentName`, `classId`, `classSecId`, `fatherName`, `motherName`, 
+    `priPhoneNo`, `secPhoneNo`, `address`, `zone`, `secLang`, `dob`, `commute`, 
+    `studentPhoto`, `password`, `dateCreated` 
+) 
+VALUES (
+    '$regIdVal', '$studentName', '$classId', '$classSecId', '$fatherName', '$motherName', 
+    '$priPhoneNo', '$secPhoneNo', '$address', '$zone', '$secLang', '$dob', '$commute', 
+    '$studentPhoto', '$defaultPassword', '$dateCreated'
+);
+";
+      // echo $sql; die();
+      
+      $query = mysqli_query($conn, $sql);
+
+      if ($query) {
+
+       $showAlert = 1;
+       
+        $regId = '';
+        $regIdVal = '';
+     
+      $studentName = '';
+      $classId = '';
+      $classSecId = '';
+      $fatherName = '';
+      $motherName ='';
+      $priPhoneNo = '';
+      $secPhoneNo = '';
+      $address = '';
+      $zone = '';
+      $secLang = '';
+      $dob = '';
+      $commute = '';
+      $dateCreated = '';
+      echo "END OF INSERTION";
+       if ($showAlert) {
+       echo " <script>
+            Swal.fire({
+                title: 'Success!',
+                text: 'Form submitted successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        </script>";
+          }
+
+          
+
+          $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Created Successfully!</div>";
+          $showAlert = 0;
+          // header("Location: " . $_SERVER['PHP_SELF']);
+          header("Location: " . $_SERVER['PHP_SELF'] . "?success=1");
+         
+
+      } else {
+          $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error occurred while inserting!</div>";
+      }
+
+     
   }
 }
-
-//---------------------------------------EDIT-------------------------------------------------------------
+//---------------------------------------SAVE-------------------------------------------------------------
 
 
 
@@ -50,64 +151,143 @@ if(isset($_POST['save'])){
 
 //--------------------EDIT------------------------------------------------------------
 
- if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "edit")
-	{
-        $Id= $_GET['Id'];
+if (isset($_GET['Id'], $_GET['action']) && $_GET['action'] == "edit") {
+  $Id = mysqli_real_escape_string($conn, $_GET['Id']);
 
-        $query=mysqli_query($conn,"select * from tblstudents where Id ='$Id'");
-        $row=mysqli_fetch_array($query);
+  // Fetch existing student data
+  $query = mysqli_query($conn, "SELECT * FROM tblstudents WHERE Id = '$Id'");
+  $row = mysqli_fetch_assoc($query);
 
-        //------------UPDATE-----------------------------
+  if (!$row) {
+      echo "<div class='alert alert-danger'>Student not found.</div>";
+      exit;
+  }
 
-        if(isset($_POST['update'])){
-    
-             $firstName=$_POST['firstName'];
-  $lastName=$_POST['lastName'];
-  $otherName=$_POST['otherName'];
+  // Update logic
+  if (isset($_POST['update'])) {
+      // Sanitize input
+      $regId = mysqli_real_escape_string($conn, $_POST['regId']);
+      $studentName = mysqli_real_escape_string($conn, $_POST['studentName']);
+      $classId = mysqli_real_escape_string($conn, $_POST['classId']);
+      $classSecId = mysqli_real_escape_string($conn, $_POST['classSecId']);
+      $fatherName = mysqli_real_escape_string($conn, $_POST['fatherName']);
+      $motherName = mysqli_real_escape_string($conn, $_POST['motherName']);
+      $priPhoneNo = mysqli_real_escape_string($conn, $_POST['priPhoneNo']);
+      $secPhoneNo = mysqli_real_escape_string($conn, $_POST['secPhoneNo']);
+      $address = mysqli_real_escape_string($conn, $_POST['address']);
+      $zone = mysqli_real_escape_string($conn, $_POST['zone']);
+      $secLang = mysqli_real_escape_string($conn, $_POST['secLang']);
+      $dob = mysqli_real_escape_string($conn, $_POST['dob']);
+      $commute = mysqli_real_escape_string($conn, $_POST['commute']);
+      $dateCreated = date("Y-m-d");
 
-  $admissionNumber=$_POST['admissionNumber'];
-  $classId=$_POST['classId'];
-  $classArmId=$_POST['classArmId'];
-  $dateCreated = date("Y-m-d");
+      // Handle photo upload
+      $studentPhoto = $row['studentPhoto']; // Default: existing photo
 
- $query=mysqli_query($conn,"update tblstudents set firstName='$firstName', lastName='$lastName',
-    otherName='$otherName', admissionNumber='$admissionNumber',password='12345', classId='$classId',classArmId='$classArmId'
-    where Id='$Id'");
-            if ($query) {
-                
-                echo "<script type = \"text/javascript\">
-                window.location = (\"createStudents.php\")
-                </script>"; 
-            }
-            else
-            {
-                $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error Occurred!</div>";
-            }
-        }
-    }
+      if (!empty($_FILES['studentPhoto']['name'])) {
+        $targetDir = "../Student/studentPhoto/";
+        $fileName = basename($_FILES["studentPhoto"]["name"]);
+          $parts = explode('.', $fileName);
+        
+          $extension = end($parts);
+          // echo $extension; 
+      //  $targetDir = "studentPhoto/";
+        $fname = $regId.".".$extension;
+        // echo $fname;
+        // die();
+        $targetFilePath = $targetDir.$regIdVal."_".$extension;
+          $targetFilePath = $targetDir . $fname;
+          $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+
+          $allowTypes = array('jpg', 'jpeg', 'png', 'gif');
+
+          if (in_array($fileType, $allowTypes)) {
+              if (move_uploaded_file($_FILES["studentPhoto"]["tmp_name"], $targetFilePath)) {
+                  // Delete old photo if new uploaded
+                  if (!empty($row['studentPhoto']) && file_exists($row['studentPhoto'])) {
+                      unlink($row['studentPhoto']);
+                  }
+                  $studentPhoto = "studentPhoto/".$fname;
+              }
+          }
+      }
+
+      // Perform update
+      $updateQuery = "UPDATE tblstudents SET 
+          -- regId = '$regId',
+          studentName = '$studentName',
+          classId = '$classId',
+          classSecId = '$classSecId',
+          fatherName = '$fatherName',
+          motherName = '$motherName',
+          priPhoneNo = '$priPhoneNo',
+          secPhoneNo = '$secPhoneNo',
+          address = '$address',
+          zone = '$zone',
+          secLang = '$secLang',
+          dob = '$dob',
+          commute = '$commute',
+          studentPhoto = '$studentPhoto',
+          dateCreated = '$dateCreated'
+      WHERE Id = '$Id'";
+
+      if (mysqli_query($conn, $updateQuery)) {
+          // echo "<script type='text/javascript'>
+          
+          //     alert('Student updated successfully!');
+          //     window.location = 'createStudents.php';
+          // </script>";
+          // exit;
+          header("Location: " . $_SERVER['PHP_SELF'] . "?update=1");
+
+
+
+          // echo "<script>
+          //               Swal.fire({
+          //                       title: 'Success!',
+          //                       text: 'Form submitted successfully DAta.',
+          //                       icon: 'success',
+          //                       confirmButtonText: 'OK'
+          //                   }).then(() => {
+          //                       // Remove query string without reloading
+          //                       window.history.replaceState({}, document.title, window.location.pathname);
+          //                   });
+          //               </script>";
+      } else {
+          echo "<div class='alert alert-danger'>Error updating student: " . mysqli_error($conn) . "</div>";
+      }
+  }
+}
+
 
 
 //--------------------------------DELETE------------------------------------------------------------------
 
-  if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
-	{
-        $Id= $_GET['Id'];
-        $classArmId= $_GET['classArmId'];
+if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete") {
+  $Id = $_GET['Id'];
 
-        $query = mysqli_query($conn,"DELETE FROM tblstudents WHERE Id='$Id'");
+  // Fetch the student to delete associated photo
+  $fetchQuery = mysqli_query($conn, "SELECT studentPhoto FROM tblstudents WHERE Id = '$Id'");
+  $student = mysqli_fetch_array($fetchQuery);
+  $photoPath = $student['studentPhoto'];
 
-        if ($query == TRUE) {
+  // Delete student record
+  $query = mysqli_query($conn, "DELETE FROM tblstudents WHERE Id = '$Id'");
 
-            echo "<script type = \"text/javascript\">
-            window.location = (\"createStudents.php\")
-            </script>";
-        }
-        else{
+  if ($query) {
+      // Delete photo file if it exists
+      if (!empty($photoPath) && file_exists($photoPath)) {
+          unlink($photoPath);
+      }
 
-            $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error Occurred!</div>"; 
-         }
-      
+      echo "<script type='text/javascript'>
+          window.location = ('createStudents.php');
+      </script>";
+  } else {
+      $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error occurred while deleting!</div>";
   }
+}
+
 
 
 ?>
@@ -128,7 +308,7 @@ if(isset($_POST['save'])){
   <link href="css/ruang-admin.min.css" rel="stylesheet">
 
 
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
    <script>
     function classArmDropdown(str) {
     if (str == "") {
@@ -152,6 +332,9 @@ if(isset($_POST['save'])){
     }
 }
 </script>
+
+
+
 </head>
 
 <body id="page-top">
@@ -181,68 +364,185 @@ if(isset($_POST['save'])){
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">Create Students</h6>
-                    <?php echo $statusMsg; ?>
+                    <?php echo $statusMsg;  ?>
+                    <?php if (isset($_GET['success'])){ ?>
+                   
+                      <script>
+                        Swal.fire({
+                                title: 'Success!',
+                                text: 'Form submitted successfully DAta.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                // Remove query string without reloading
+                                window.history.replaceState({}, document.title, window.location.pathname);
+                            });
+                        </script>
+                      <?php 
+                      header("Location: " . $_SERVER['PHP_SELF'] . "?success=0");
+                    
+                    } ?>
+
+<?php if (isset($_GET['update'])){ ?>
+                     
+                      <script>
+                        Swal.fire({
+                                title: 'Success!',
+                                text: 'Form submitted successfully update.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                // Remove query string without reloading
+                                window.history.replaceState({}, document.title, window.location.pathname);
+                            });
+                        </script>
+                      <?php 
+                      header("Location: " . $_SERVER['PHP_SELF'] . "?update=0");
+                    
+                    } ?>
+                    
+                   
                 </div>
                 <div class="card-body">
-                  <form method="post">
-                   <div class="form-group row mb-3">
-                        <div class="col-xl-6">
-                        <label class="form-control-label">Firstname<span class="text-danger ml-2">*</span></label>
-                        <input type="text" class="form-control" name="firstName" value="<?php echo $row['firstName'];?>" id="exampleInputFirstName" >
-                        </div>
-                        <div class="col-xl-6">
-                        <label class="form-control-label">Lastname<span class="text-danger ml-2">*</span></label>
-                      <input type="text" class="form-control" name="lastName" value="<?php echo $row['lastName'];?>" id="exampleInputFirstName" >
-                        </div>
-                    </div>
-                     <div class="form-group row mb-3">
-                        <div class="col-xl-6">
-                        <label class="form-control-label">Other Name<span class="text-danger ml-2">*</span></label>
-                        <input type="text" class="form-control" name="otherName" value="<?php echo $row['otherName'];?>" id="exampleInputFirstName" >
-                        </div>
-                        <div class="col-xl-6">
-                        <label class="form-control-label">Admission Number<span class="text-danger ml-2">*</span></label>
-                      <input type="text" class="form-control" required name="admissionNumber" value="<?php echo $row['admissionNumber'];?>" id="exampleInputFirstName" >
-                        </div>
-                    </div>
-                    <div class="form-group row mb-3">
-                        <div class="col-xl-6">
-                        <label class="form-control-label">Select Class<span class="text-danger ml-2">*</span></label>
-                         <?php
-                        $qry= "SELECT * FROM tblclass ORDER BY className ASC";
-                        $result = $conn->query($qry);
-                        $num = $result->num_rows;		
-                        if ($num > 0){
-                          echo ' <select required name="classId" onchange="classArmDropdown(this.value)" class="form-control mb-3">';
-                          echo'<option value="">--Select Class--</option>';
-                          while ($rows = $result->fetch_assoc()){
-                          echo'<option value="'.$rows['Id'].'" >'.$rows['className'].'</option>';
-                              }
-                                  echo '</select>';
-                              }
-                            ?>  
-                        </div>
-                        <div class="col-xl-6">
-                        <label class="form-control-label">Class Arm<span class="text-danger ml-2">*</span></label>
-                            <?php
-                                echo"<div id='txtHint'></div>";
-                            ?>
-                        </div>
-                    </div>
-                      <?php
-                    if (isset($Id))
-                    {
-                    ?>
-                    <button type="submit" name="update" class="btn btn-warning">Update</button>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <?php
-                    } else {           
-                    ?>
-                    <button type="submit" name="save" class="btn btn-primary">Save</button>
-                    <?php
-                    }         
-                    ?>
-                  </form>
+
+                <form id="studentForm" method="post" enctype="multipart/form-data">
+  <div class="form-group row mb-3">
+    <div class="col-xl-6">
+      <!-- <label class="form-control-label">Student ID</label> -->
+      <input type="hidden" class="form-control" name="Id" value="<?php echo htmlspecialchars($row['Id'] ?? ''); ?>" >
+    </div>
+    <div class="col-xl-6">
+      <!-- <label class="form-control-label">Registration ID <span class="text-danger">*</span></label> -->
+      <input type="hidden" class="form-control" name="regId" value="<?php echo htmlspecialchars($row['regId'] ?? ''); ?>" required>
+    </div>
+  </div> 
+
+  <div class="form-group row mb-3">
+    <div class="col-xl-6">
+      <label class="form-control-label">Student Name <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" name="studentName" value="<?php echo htmlspecialchars($row['studentName'] ?? ''); ?>" required>
+    </div>
+    <div class="col-xl-6">
+      <label class="form-control-label">Class <span class="text-danger">*</span></label>
+      <select name="classId" required class="form-control">
+        <option value="">--Select Class--</option>
+        <?php
+        $qry = "SELECT * FROM tblclass ORDER BY className ASC";
+        $result = $conn->query($qry);
+        while ($cls = $result->fetch_assoc()) {
+          $selected = ($row['classId'] ?? '') == $cls['Id'] ? 'selected' : '';
+          echo "<option value='{$cls['Id']}' $selected>{$cls['className']}</option>";
+        }
+        ?>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group row mb-3">
+    <div class="col-xl-6">
+      <label class="form-control-label">Class Section <span class="text-danger">*</span></label>
+      <select name="classSecId" required class="form-control">
+        <option value="">--Select Section--</option>
+        <?php
+        $qrySec = "SELECT * FROM tblclassarms ORDER BY classArmName ASC";
+        $resSec = $conn->query($qrySec);
+        while ($sec = $resSec->fetch_assoc()) {
+          $selected = ($row['classSecId'] ?? '') == $sec['Id'] ? 'selected' : '';
+          echo "<option value='{$sec['Id']}' $selected>{$sec['classArmName']}</option>";
+        }
+        ?>
+      </select>
+    </div>
+    <div class="col-xl-6">
+      <label class="form-control-label">Father Name <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" name="fatherName" value="<?php echo htmlspecialchars($row['fatherName'] ?? ''); ?>" required>
+    </div>
+  </div>
+
+  <div class="form-group row mb-3">
+    <div class="col-xl-6">
+      <label class="form-control-label">Mother Name <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" name="motherName" value="<?php echo htmlspecialchars($row['motherName'] ?? ''); ?>" required>
+    </div>
+    <div class="col-xl-6">
+      <label class="form-control-label">Primary Phone No. <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" name="priPhoneNo" value="<?php echo htmlspecialchars($row['priPhoneNo'] ?? ''); ?>" required>
+    </div>
+  </div>
+
+  <div class="form-group row mb-3">
+    <div class="col-xl-6">
+      <label class="form-control-label">Secondary Phone No.</label>
+      <input type="text" class="form-control" name="secPhoneNo" value="<?php echo htmlspecialchars($row['secPhoneNo'] ?? ''); ?>">
+    </div>
+    <div class="col-xl-6">
+      <label class="form-control-label">Address <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" name="address" value="<?php echo htmlspecialchars($row['address'] ?? ''); ?>" required>
+    </div>
+  </div>
+
+  <div class="form-group row mb-3">
+    <div class="col-xl-6">
+      <label class="form-control-label">Zone <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" name="zone" value="<?php echo htmlspecialchars($row['zone'] ?? ''); ?>" required>
+    </div>
+    <div class="col-xl-6">
+  <label class="form-control-label">Second Language</label>
+  <select class="form-control" name="secLang">
+  <option value="" >-- Select Language --</option>
+    <option value="Hindi" <?php echo (isset($row['secLang']) && $row['secLang'] == 'Hindi') ? 'selected' : ''; ?>>Hindi</option>
+    <option value="Bengali" <?php echo (isset($row['secLang']) && $row['secLang'] == 'Bengali') ? 'selected' : ''; ?>>Bengali</option>
+  </select>
+</div>
+  </div>
+  <div class="form-group row mb-3">
+  <div class="col-xl-6">
+  <label class="form-control-label">Date of Birth</label>
+  <input type="date" class="form-control" name="dob" value="<?php echo htmlspecialchars($row['dob'] ?? ''); ?>">
+</div>
+<div class="col-xl-6">
+  <label class="form-control-label">Mode of Commute</label>
+  <select class="form-control" name="commute">
+    <option value="">-- Please select your mode of commute --</option>
+    <option value="Walking" <?php echo (isset($row['commute']) && $row['commute'] == 'Walking') ? 'selected' : ''; ?>>On foot</option>
+    <option value="Car" <?php echo (isset($row['commute']) && $row['commute'] == 'Car') ? 'selected' : ''; ?>>By car</option>
+    <option value="Public Transport" <?php echo (isset($row['commute']) && $row['commute'] == 'Public Transport') ? 'selected' : ''; ?>>By public transport</option>
+    <option value="Other" <?php echo (isset($row['commute']) && $row['commute'] == 'Other') ? 'selected' : ''; ?>>Other</option>
+  </select>
+</div>
+
+    </div>
+
+
+  <div class="form-group row mb-3">
+    <div class="col-xl-6">
+      <label class="form-control-label">Student Photo</label>
+      <input type="file" class="form-control-file" name="studentPhoto">
+      <?php if (!empty($row['studentPhoto'])): ?>
+        <small>Current: <a href="uploads/<?php echo htmlspecialchars($row['studentPhoto']); ?>" target="_blank">View</a></small>
+      <?php endif; ?>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <div class="col-xl-12">
+      <?php
+      if (!empty($row['Id'])) {
+        echo '<button type="submit" name="update" class="btn btn-warning">Update</button>';
+      } else {
+        echo '<button type="submit" name="save" class="btn btn-primary">Save</button>';
+      }
+      ?>
+    </div>
+  </div>
+</form>
+
+
+
+
+
+
+
                 </div>
               </div>
 
@@ -254,65 +554,83 @@ if(isset($_POST['save'])){
                   <h6 class="m-0 font-weight-bold text-primary">All Student</h6>
                 </div>
                 <div class="table-responsive p-3">
-                  <table class="table align-items-center table-flush table-hover" id="dataTableHover">
-                    <thead class="thead-light">
-                      <tr>
-                        <th>#</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Other Name</th>
-                        <th>Admission No</th>
-                        <th>Class</th>
-                        <th>Class Arm</th>
-                        <th>Date Created</th>
-                         <th>Edit</th>
-                        <th>Delete</th>
-                      </tr>
-                    </thead>
-                
-                    <tbody>
+                <table class="table align-items-center table-flush table-hover" id="dataTableHover">
+  <thead class="thead-light">
+    <tr>
+      <th>#</th>
+      <th>Reg ID</th>
+      <th>Student Name</th>
+      <th>Class</th>
+      <th>Class Section</th>
+      <th>Father Name</th>
+      <th>Mother Name</th>
+      <th>Primary Phone</th>
+      <th>Secondary Phone</th>
+      <th>Address</th>
+      <th>Zone</th>
+      <th>Second Language</th>
+      <th>Date of Birth</th>
+      <th>Mode of Commute</th>
+      <th>Date Created</th>
+      <th>Edit</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
 
-                  <?php
-                      $query = "SELECT tblstudents.Id,tblclass.className,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblstudents.firstName,
-                      tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber,tblstudents.dateCreated
-                      FROM tblstudents
-                      INNER JOIN tblclass ON tblclass.Id = tblstudents.classId
-                      INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classArmId";
-                      $rs = $conn->query($query);
-                      $num = $rs->num_rows;
-                      $sn=0;
-                      $status="";
-                      if($num > 0)
-                      { 
-                        while ($rows = $rs->fetch_assoc())
-                          {
-                             $sn = $sn + 1;
-                            echo"
-                              <tr>
-                                <td>".$sn."</td>
-                                <td>".$rows['firstName']."</td>
-                                <td>".$rows['lastName']."</td>
-                                <td>".$rows['otherName']."</td>
-                                <td>".$rows['admissionNumber']."</td>
-                                <td>".$rows['className']."</td>
-                                <td>".$rows['classArmName']."</td>
-                                 <td>".$rows['dateCreated']."</td>
-                                <td><a href='?action=edit&Id=".$rows['Id']."'><i class='fas fa-fw fa-edit'></i></a></td>
-                                <td><a href='?action=delete&Id=".$rows['Id']."'><i class='fas fa-fw fa-trash'></i></a></td>
-                              </tr>";
-                          }
-                      }
-                      else
-                      {
-                           echo   
-                           "<div class='alert alert-danger' role='alert'>
-                            No Record Found!
-                            </div>";
-                      }
-                      
-                      ?>
-                    </tbody>
-                  </table>
+  <tbody>
+    <?php
+    $query = "SELECT s.Id, s.regId, s.studentName, s.fatherName, s.motherName, s.priPhoneNo, s.secPhoneNo,
+                     s.address, s.zone, s.secLang, s.dob,s.commute, s.dateCreated,
+                     c.className, a.classArmName AS classSecName
+              FROM tblstudents s
+              INNER JOIN tblclass c ON c.Id = s.classId
+              INNER JOIN tblclassarms a ON a.Id = s.classSecId";
+
+    $rs = $conn->query($query);
+    $sn = 0;
+
+    if ($rs->num_rows > 0) {
+      while ($row = $rs->fetch_assoc()) {
+        $sn++;
+        echo "
+          <tr>
+            <td>{$sn}</td>
+            <td>{$row['regId']}</td>
+            <td>{$row['studentName']}</td>
+            <td>{$row['className']}</td>
+            <td>{$row['classSecName']}</td>
+            <td>{$row['fatherName']}</td>
+            <td>{$row['motherName']}</td>
+            <td>{$row['priPhoneNo']}</td>
+            <td>{$row['secPhoneNo']}</td>
+            <td>{$row['address']}</td>
+            <td>{$row['zone']}</td>
+            <td>{$row['secLang']}</td>
+             <td>{$row['dob']}</td>
+              <td>{$row['commute']}</td>
+            <td>{$row['dateCreated']}</td>
+            <td><a href='?action=edit&Id={$row['Id']}'><i class='fas fa-fw fa-edit'></i></a></td>
+            <td><a href='?action=delete&Id={$row['Id']}' onclick=\"return confirm('Are you sure you want to delete this student?');\"><i class='fas fa-fw fa-trash'></i></a></td>
+          </tr>";
+      }
+    } else {
+      echo "
+        <tr>
+          <td colspan='15'>
+            <div class='alert alert-danger' role='alert'>
+              No Record Found!
+            </div>
+          </td>
+        </tr>";
+    }
+    ?>
+  </tbody>
+</table>
+
+
+
+
+
                 </div>
               </div>
             </div>
@@ -359,7 +677,41 @@ if(isset($_POST['save'])){
       $('#dataTable').DataTable(); // ID From dataTable 
       $('#dataTableHover').DataTable(); // ID From dataTable with Hover
     });
+
+
+
   </script>
+<!-- <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("studentForm");
+
+    if (!form) {
+      console.warn("Form not found!");
+      return;
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault(); // Prevent actual submission
+
+      const formData = new FormData(form);
+      const data = {};
+
+      formData.forEach((value, key) => {
+        if (value instanceof File) {
+          data[key] = value.name || "(no file selected)";
+        } else {
+          data[key] = value;
+        }
+      });
+
+      console.log("Form submitted. Data:", data);
+
+      
+    });
+  });
+</script> -->
+
+
 </body>
 
 </html>

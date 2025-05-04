@@ -56,7 +56,7 @@ include '../Includes/session.php';
           <div class="row mb-3">
           <!-- New User Card Example -->
           <?php 
-$query1=mysqli_query($conn,"SELECT * from tblstudents where classId = '$_SESSION[classId]' and classArmId = '$_SESSION[classArmId]'");                       
+$query1=mysqli_query($conn,"SELECT * from tblstudents where classId = '$_SESSION[classId]' and classSecId = '$_SESSION[classArmId]'");                       
 $students = mysqli_num_rows($query1);
 ?>
             <div class="col-xl-3 col-md-6 mb-4">

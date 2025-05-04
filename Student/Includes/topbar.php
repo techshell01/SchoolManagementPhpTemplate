@@ -5,7 +5,7 @@
   $rs = $conn->query($query);
   $num = $rs->num_rows;
   $rows = $rs->fetch_assoc();
-  $fullName = $rows['firstName']." ".$rows['lastName'];;
+  $fullName = $rows['studentName'];
 
 ?>
 <nav class="navbar navbar-expand navbar-light bg-gradient-primary topbar mb-4 static-top">

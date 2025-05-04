@@ -101,18 +101,14 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
                         <th>Other Name</th>
                         <th>Admission No</th>
                         <th>Class</th>
-                        <th>Class Arm</th>
+                        <th>Class Arm 555</th>
                       </tr>
                     </thead>
                     
                     <tbody>
 
                   <?php
-                      $query = "SELECT tblstudents.Id,tblclass.className,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblstudents.firstName,
-                      tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber,tblstudents.dateCreated
-                      FROM tblstudents
-                      INNER JOIN tblclass ON tblclass.Id = tblstudents.classId
-                      INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classArmId
+                      $query = "SELECT tblstudents.Id,tblclass.className,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblstudents.studentName, tblstudents.regId,tblstudents.studentPhoto,tblstudents.dateCreated FROM tblstudents INNER JOIN tblclass ON tblclass.Id = tblstudents.classId INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classSecId
                       where tblstudents.Id = '$_SESSION[userId]'";
                       $rs = $conn->query($query);
                       $num = $rs->num_rows;
@@ -126,10 +122,10 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
                             echo"
                               <tr>
                                 <td>".$sn."</td>
-                                <td>".$rows['firstName']."</td>
-                                <td>".$rows['lastName']."</td>
-                                <td>".$rows['otherName']."</td>
-                                <td>".$rows['admissionNumber']."</td>
+                                <td>".$rows['studentName']."</td>
+                                <td>".$rows['regId']."</td>
+                                <td>".$rows['studentPhoto']."</td>
+                                <td><img src=".$rows['studentPhoto']." width=\"100\" height=\"100\"/></td>
                                 <td>".$rows['className']."</td>
                                 <td>".$rows['classArmName']."</td>
                               </tr>";

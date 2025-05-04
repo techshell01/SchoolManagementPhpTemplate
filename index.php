@@ -133,7 +133,7 @@ session_start();
     }
     else if($userType == "Student"){
 
-      $query = "SELECT * FROM tblstudents WHERE admissionNumber = '$username' AND password = '$password'";
+      $query = "SELECT * FROM tblstudents WHERE regId = '$username' AND password = '$password'";
       $rs = $conn->query($query);
       $num = $rs->num_rows;
       $rows = $rs->fetch_assoc();
@@ -142,11 +142,12 @@ session_start();
 
         $_SESSION['regNum'] = '1001';
         $_SESSION['userId'] = $rows['Id'];
-        $_SESSION['firstName'] = $rows['firstName'];
-        $_SESSION['lastName'] = $rows['lastName'];
-        $_SESSION['admissionNumber'] = $rows['emailAddress'];
+       // echo $_SESSION['Id'];die();
+        $_SESSION['regId'] = $rows['regId'];
+        $_SESSION['studentName'] = $rows['studentName'];
+        // $_SESSION['admissionNumber'] = $rows['emailAddress'];
         $_SESSION['classId'] = $rows['classId'];
-        $_SESSION['classArmId'] = $rows['classArmId'];
+        $_SESSION['classSecId'] = $rows['classSecId'];
 
         echo "<script type = \"text/javascript\">
         window.location = (\"Student/index.php\")
