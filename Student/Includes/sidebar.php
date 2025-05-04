@@ -32,6 +32,26 @@
       </li>
       <hr class="sidebar-divider">
       <div class="sidebar-heading">
+      Admission Form Preview
+      </div>
+      </li>
+       <li class="nav-item">
+       <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsAddmiaion3"
+          aria-expanded="true" aria-controls="collapsAddmiaion3">
+          <i class="fa fa-calendar-alt"></i>
+          <span> Admission Form Preview</span>
+        </a>
+        <div id="collapsAddmiaion3" class="collapse" aria-labelledby="headingBootstrap" data-parent="#collapsAddmiaion3">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">View Details</h6>
+            <a class="collapse-item" href="viewAdmissionPreview.php">Preview Form</a>
+            <!-- <a class="collapse-item" href="#">Assets Type</a> -->
+          </div>
+        </div>
+       </li>
+
+      <hr class="sidebar-divider">
+      <div class="sidebar-heading">
       Payments Details
       </div>
       </li>
