@@ -15,13 +15,13 @@ include '../Includes/session.php';
 
         //------------UPDATE-----------------------------
         if (isset($_POST['update'])) {
-          $reg_num = $_POST['reg_num'];
-          $first_name = $_POST['first_name'];
+          $regId = $_POST['regId'];
+          $studentName = $_POST['studentName'];
           $amount = $_POST['amount'];
           $status = $_POST['status']; 
       
           $query = mysqli_query($conn, "UPDATE payments 
-              SET reg_num='$reg_num', first_name='$first_name', amount='$amount', status='$status'
+              SET regId='$regId', studentName='$studentName', amount='$amount', status='$status'
               WHERE payment_id='$payment_id'");
       
       if ($query) {
@@ -90,7 +90,7 @@ include '../Includes/session.php';
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">Approve/Rejects Payments</h6>
-                  
+
                   <?php if (!empty($statusMsg)) echo $statusMsg; ?>
 
                 </div>
@@ -100,11 +100,11 @@ include '../Includes/session.php';
                    <div class="form-group row mb-3">
                    <div class="col-xl-6">
                         <label class="form-control-label">Reg number<span class="text-danger ml-2">*</span></label>
-                      <input type="text" class="form-control"readonly name="reg_num" value="<?php echo $row['reg_num'];?>" id="exampleInputFirstName" >
+                      <input type="text" class="form-control"readonly name="regId" value="<?php echo $row['regId'];?>" id="exampleInputFirstName" >
                         </div>
                         <div class="col-xl-6">
                         <label class="form-control-label">Firstname<span class="text-danger ml-2">*</span></label>
-                        <input type="text" class="form-control"readonly name="first_name" value="<?php echo $row['first_name'];?>" id="exampleInputFirstName" >
+                        <input type="text" class="form-control"readonly name="studentName" value="<?php echo $row['studentName'];?>" id="exampleInputFirstName" >
                         </div>
                         
                     </div>
@@ -171,7 +171,7 @@ include '../Includes/session.php';
                     <tbody>
 
                   <?php
-                      $query = "SELECT payment_id, first_name, payment_type, amount, created_at,photo, status FROM payments ORDER BY created_at DESC";
+                      $query = "SELECT payment_id, studentName, payment_type, amount, created_at,photo, status FROM payments ORDER BY created_at DESC";
 
                       $rs = $conn->query($query);
                       $num = $rs->num_rows;
@@ -185,7 +185,7 @@ include '../Includes/session.php';
                             echo"
                               <tr>
                                 <td>".$sn."</td>
-                                <td>".$rows['first_name']."</td>
+                                <td>".$rows['studentName']."</td>
                                 <td>".$rows['payment_type']."</td>
                                 <td>".$rows['amount']."</td>
                                 <td>".$rows['created_at']."</td>

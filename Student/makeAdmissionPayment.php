@@ -7,9 +7,9 @@ include '../Includes/session.php';
 $statusMsg = "";
 
 if (isset($_POST['save'])) {
-    $regNum = $_SESSION['regNum'];
-    $first_name = $_SESSION['firstName'];
-    $last_name = $_SESSION['lastName'];
+    $regId = $_SESSION['regId'];
+    $studentName = $_SESSION['studentName'];
+    // $last_name = $_SESSION['lastName'];
 
     $class = $_POST['class'];
     $session = $_POST['session'];
@@ -30,9 +30,9 @@ if (isset($_POST['save'])) {
     if (in_array($fileType, $allowedTypes)) {
         if (move_uploaded_file($_FILES["paymentImage"]["tmp_name"], $targetFilePath)) {
             $query = mysqli_query($conn, "INSERT INTO payments 
-            (reg_num, first_name, last_name, class, session, amount, payment_type, status, photo,created_at)
+            (regId, studentName, class, session, amount, payment_type, status, photo,created_at)
             VALUES 
-            ('$regNum', '$first_name', '$last_name', '$class', '$session', '$amount', '$payment_type', '$status', '$fileName', '$dateCreated')");
+            ('$regId', '$studentName', '$class', '$session', '$amount', '$payment_type', '$status', '$fileName', '$dateCreated')");
 
             if ($query) {
                 $statusMsg = "<div class='alert alert-success'>Payment record created successfully!</div>";
@@ -174,10 +174,10 @@ if (isset($_POST['save'])) {
         <!-- Container Fluid-->
         <div class="container-fluid" id="container-wrapper">
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Make Payment</h1>
+            <h1 class="h3 mb-0 text-gray-800">Make Admission Payment</h1>
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="./">Home</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Create Students</li>
+              <li class="breadcrumb-item active" aria-current="page">Make Admission Payment</li>
             </ol>
           </div>
 
@@ -186,7 +186,7 @@ if (isset($_POST['save'])) {
               <!-- Form Basic -->
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Pay Monthly Fees</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Pay Admission Fees</h6>
                     <?php echo $statusMsg; ?>
                 </div>
                 <div class="card-body">
@@ -197,18 +197,20 @@ if (isset($_POST['save'])) {
                    <div class="col-xl-4">
                         <label class="form-control-label">Reg Number<span class="text-danger ml-2">*</span></label>
                       
-                        <input type="text" class="form-control" readonly value="<?php echo $_SESSION['regNum']; ?>">
+                        <input type="text" class="form-control" readonly value="<?php echo $_SESSION['regId']; ?>">
                         </div>
 
                         <div class="col-xl-4">
-                        <label class="form-control-label">Firstname<span class="text-danger ml-2">*</span></label>
-                        <input type="text" class="form-control" readonly value="<?php echo $_SESSION['firstName']; ?>">
+                        <label class="form-control-label">Name<span class="text-danger ml-2">*</span></label>
+                        <input type="text" class="form-control" readonly value="<?php echo $_SESSION['studentName']; ?>">
                         </div>
-           
+
                         <div class="col-xl-4">
-                        <label class="form-control-label">Lastname<span class="text-danger ml-2">*</span></label>
-                        <input type="text" class="form-control" readonly value="<?php echo $_SESSION['lastName']; ?>">
-                        </div>
+                        <label class="form-control-label">Payment Type<span class="text-danger ml-2">*</span></label>
+                        <input type="text" class="form-control" name="payment_type" readonly value="Admission" id="exampleInputFirstName">
+                      </div>
+           
+          
                     </div>
                    
                      <div class="form-group row mb-3">
@@ -265,39 +267,8 @@ if (isset($_POST['save'])) {
                           <input type="text" class="form-control" required name="amount" value="<?php echo $row['amount'];?>" id="exampleInputFirstName" >
                         </div>
                     </div>
-
-
-                    <div class="form-group row mb-3">
-                        <!-- <div class="col-xl-4">
-                        <label class="form-control-label">Paymemt Type<span class="text-danger ml-2">*</span></label>
-                        <input type="text" class="form-control" name="payment_type" value="<?php echo $row['payment_type'];?>" id="exampleInputFirstName" >
-                        </div> -->
-                        <div class="col-xl-4">
-                        <label class="form-control-label">Payment Type<span class="text-danger ml-2">*</span></label>
-                        <input type="text" class="form-control" name="payment_type" readonly value="Admission" id="exampleInputFirstName">
-                      </div>
-
-                    
-                        <!-- <div class="col-xl-4">
-                        <label for="month">Choose a month <span class="text-danger ml-2">*</span></label>
-                          <select name="month" id="month" class="form-control mb-3">
-                          <option value="">--Select month--</option>
-                            <option value="January">January</option>
-                            <option value="February">February</option>
-                            <option value="March">March</option>
-                            <option value="April">April</option>
-                            <option value="May">May</option>
-                            <option value="June">June</option>
-                            <option value="July">July</option>
-                            <option value="August">August</option>
-                            <option value="September">September</option>
-                            <option value="October">October</option>
-                            <option value="November">November</option>
-                            <option value="December">December</option>
-                          </select>
-                        </div> -->
-                    </div>
                 </div>
+
                 <div class="col-xl-4">
                     <img src="img/schoolQR.JPG" name="qr" style="height: 364px;width: 190px;"/>
                     </div>

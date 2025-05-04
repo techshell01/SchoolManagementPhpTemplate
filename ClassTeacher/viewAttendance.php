@@ -82,10 +82,10 @@ include '../Includes/session.php';
                     <thead class="thead-light">
                       <tr>
                         <th>#</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Other Name</th>
-                        <th>Admission No</th>
+                        <th>Student Name</th>
+                        <th>Phone No</th>
+                        <th>DOB</th>
+                        <th>Reg No</th>
                         <th>Class</th>
                         <th>Class Arm</th>
                         <th>Session</th>
@@ -102,16 +102,9 @@ include '../Includes/session.php';
                     if(isset($_POST['view'])){
 
                       $dateTaken =  $_POST['dateTaken'];
-
-                      $query = "SELECT tblattendance.Id,tblattendance.status,tblattendance.dateTimeTaken,tblclass.className,
-                      tblclassarms.classArmName,tblsessionterm.sessionName,tblsessionterm.termId,tblterm.termName,
-                      tblstudents.firstName,tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber
-                      FROM tblattendance
-                      INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
-                      INNER JOIN tblclassarms ON tblclassarms.Id = tblattendance.classArmId
-                      INNER JOIN tblsessionterm ON tblsessionterm.Id = tblattendance.sessionTermId
-                      INNER JOIN tblterm ON tblterm.Id = tblsessionterm.termId
-                      INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
+                      // echo $dateTaken;
+                      // die();
+                      $query = "SELECT tblattendance.Id,tblattendance.status,tblattendance.dateTimeTaken,tblclass.className, tblclassarms.classArmName,tblsessionterm.sessionName,tblsessionterm.termId,tblterm.termName, tblstudents.studentName,tblstudents.priPhoneNo,tblstudents.dob,tblstudents.regId FROM tblattendance INNER JOIN tblclass ON tblclass.Id = tblattendance.classId INNER JOIN tblclassarms ON tblclassarms.Id = tblattendance.classArmId INNER JOIN tblsessionterm ON tblsessionterm.Id = tblattendance.sessionTermId INNER JOIN tblterm ON tblterm.Id = tblsessionterm.termId INNER JOIN tblstudents ON tblstudents.regId = tblattendance.admissionNo
                       where tblattendance.dateTimeTaken = '$dateTaken' and tblattendance.classId = '$_SESSION[classId]' and tblattendance.classArmId = '$_SESSION[classArmId]'";
                       $rs = $conn->query($query);
                       $num = $rs->num_rows;
@@ -126,10 +119,10 @@ include '../Includes/session.php';
                             echo"
                               <tr>
                                 <td>".$sn."</td>
-                                 <td>".$rows['firstName']."</td>
-                                <td>".$rows['lastName']."</td>
-                                <td>".$rows['otherName']."</td>
-                                <td>".$rows['admissionNumber']."</td>
+                                 <td>".$rows['studentName']."</td>
+                                <td>".$rows['priPhoneNo']."</td>
+                                <td>".$rows['dob']."</td>
+                                <td>".$rows['regId']."</td>
                                 <td>".$rows['className']."</td>
                                 <td>".$rows['classArmName']."</td>
                                 <td>".$rows['sessionName']."</td>

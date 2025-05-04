@@ -84,14 +84,14 @@ include '../Includes/session.php';
                         <div class="col-xl-6">
                         <label class="form-control-label">Select Student<span class="text-danger ml-2">*</span></label>
                         <?php
-                        $qry= "SELECT * FROM tblstudents where classId = '$_SESSION[classId]' and classArmId = '$_SESSION[classArmId]' ORDER BY firstName ASC";
+                        $qry= "SELECT * FROM tblstudents where classId = '$_SESSION[classId]' and classSecId = '$_SESSION[classArmId]' ORDER BY studentName ASC";
                         $result = $conn->query($qry);
                         $num = $result->num_rows;		
                         if ($num > 0){
                           echo ' <select required name="admissionNumber" class="form-control mb-3">';
                           echo'<option value="">--Select Student--</option>';
                           while ($rows = $result->fetch_assoc()){
-                          echo'<option value="'.$rows['admissionNumber'].'" >'.$rows['firstName'].' '.$rows['lastName'].'</option>';
+                          echo'<option value="'.$rows['regId'].'" >'.$rows['studentName'].'</option>';
                               }
                                   echo '</select>';
                               }
@@ -137,10 +137,10 @@ include '../Includes/session.php';
                     <thead class="thead-light">
                       <tr>
                         <th>#</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Other Name</th>
-                        <th>Admission No</th>
+                        <th>Student Name</th>
+                        <th>DOB</th>
+                        <th>Phone NO.</th>
+                        <th>Reg. No.</th>
                         <th>Class</th>
                         <th>Class Arm</th>
                         <th>Session</th>
@@ -163,13 +163,13 @@ include '../Includes/session.php';
 
                         $query = "SELECT tblattendance.Id,tblattendance.status,tblattendance.dateTimeTaken,tblclass.className,
                         tblclassarms.classArmName,tblsessionterm.sessionName,tblsessionterm.termId,tblterm.termName,
-                        tblstudents.firstName,tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber
+                        tblstudents.studentName,tblstudents.dob,tblstudents.priPhoneNo,tblstudents.regId
                         FROM tblattendance
                         INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
                         INNER JOIN tblclassarms ON tblclassarms.Id = tblattendance.classArmId
                         INNER JOIN tblsessionterm ON tblsessionterm.Id = tblattendance.sessionTermId
                         INNER JOIN tblterm ON tblterm.Id = tblsessionterm.termId
-                        INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
+                        INNER JOIN tblstudents ON tblstudents.regId = tblattendance.admissionNo
                         where tblattendance.admissionNo = '$admissionNumber' and tblattendance.classId = '$_SESSION[classId]' and tblattendance.classArmId = '$_SESSION[classArmId]'";
 
                        }
@@ -179,13 +179,13 @@ include '../Includes/session.php';
 
                          $query = "SELECT tblattendance.Id,tblattendance.status,tblattendance.dateTimeTaken,tblclass.className,
                         tblclassarms.classArmName,tblsessionterm.sessionName,tblsessionterm.termId,tblterm.termName,
-                        tblstudents.firstName,tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber
+                        tblstudents.studentName,tblstudents.dob,tblstudents.priPhoneNo,tblstudents.regId
                         FROM tblattendance
                         INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
                         INNER JOIN tblclassarms ON tblclassarms.Id = tblattendance.classArmId
                         INNER JOIN tblsessionterm ON tblsessionterm.Id = tblattendance.sessionTermId
                         INNER JOIN tblterm ON tblterm.Id = tblsessionterm.termId
-                        INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
+                        INNER JOIN tblstudents ON tblstudents.regId = tblattendance.admissionNo
                         where tblattendance.dateTimeTaken = '$singleDate' and tblattendance.admissionNo = '$admissionNumber' and tblattendance.classId = '$_SESSION[classId]' and tblattendance.classArmId = '$_SESSION[classArmId]'";
                         
 
@@ -221,10 +221,10 @@ include '../Includes/session.php';
                             echo"
                               <tr>
                                 <td>".$sn."</td>
-                                 <td>".$rows['firstName']."</td>
-                                <td>".$rows['lastName']."</td>
-                                <td>".$rows['otherName']."</td>
-                                <td>".$rows['admissionNumber']."</td>
+                                 <td>".$rows['studentName']."</td>
+                                <td>".$rows['dob']."</td>
+                                <td>".$rows['priPhoneNo']."</td>
+                                <td>".$rows['regId']."</td>
                                 <td>".$rows['className']."</td>
                                 <td>".$rows['classArmName']."</td>
                                 <td>".$rows['sessionName']."</td>

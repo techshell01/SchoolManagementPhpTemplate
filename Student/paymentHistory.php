@@ -4,6 +4,8 @@ error_reporting(0);
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
+$regId = $_SESSION['regId'];
+
 ?>
 
 <!DOCTYPE html>
@@ -97,7 +99,7 @@ include '../Includes/session.php';
                     <tbody>
 
                   <?php
-                      $query = "SELECT first_name, payment_type, amount, created_at, status FROM payments ORDER BY created_at DESC";
+                     $query = "SELECT studentName, payment_type, amount, created_at, status FROM payments WHERE regId = '$regId' ORDER BY created_at DESC";
 
                       $rs = $conn->query($query);
                       $num = $rs->num_rows;
@@ -111,7 +113,7 @@ include '../Includes/session.php';
                             echo"
                               <tr>
                                 <td>".$sn."</td>
-                                <td>".$rows['first_name']."</td>
+                                <td>".$rows['studentName']."</td>
                                 <td>".$rows['payment_type']."</td>
                                 <td>".$rows['amount']."</td>
                                 <td>".$rows['created_at']."</td>

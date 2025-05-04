@@ -7,8 +7,8 @@ include '../Includes/session.php';
 $statusMsg = "";
 
 if (isset($_POST['save'])) {
-    $regNum = $_SESSION['regNum'];
-    $first_name = $_SESSION['firstName'];
+  $regId = $_SESSION['regId'];
+  $studentName = $_SESSION['studentName'];
     $last_name = $_SESSION['lastName'];
 
     $class = $_POST['class'];
@@ -174,10 +174,10 @@ if (isset($_POST['save'])) {
         <!-- Container Fluid-->
         <div class="container-fluid" id="container-wrapper">
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Make Payment</h1>
+            <h1 class="h3 mb-0 text-gray-800">Make Monthly Payment</h1>
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="./">Home</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Create Students</li>
+              <li class="breadcrumb-item active" aria-current="page">Make Monthly Payment</li>
             </ol>
           </div>
 
@@ -197,12 +197,12 @@ if (isset($_POST['save'])) {
                    <div class="col-xl-4">
                         <label class="form-control-label">Reg Number<span class="text-danger ml-2">*</span></label>
                       
-                        <input type="text" class="form-control" readonly value="<?php echo $_SESSION['regNum']; ?>">
+                        <input type="text" class="form-control" readonly value="<?php echo $_SESSION['regId']; ?>">
                         </div>
 
                         <div class="col-xl-4">
                         <label class="form-control-label">Firstname<span class="text-danger ml-2">*</span></label>
-                        <input type="text" class="form-control" readonly value="<?php echo $_SESSION['firstName']; ?>">
+                        <input type="text" class="form-control" readonly value="<?php echo $_SESSION['studentName']; ?>">
                         </div>
            
                         <div class="col-xl-4">
