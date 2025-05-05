@@ -1,9 +1,9 @@
  <ul class="navbar-nav sidebar sidebar-light accordion " id="accordionSidebar">
      <a class="sidebar-brand d-flex align-items-center bg-gradient-primary  justify-content-center" href="index.php">
          <div class="sidebar-brand-icon">
-             <img src="img/logo/attnlg.jpg">
+             <img src="img/logo/techShell.jpg">
          </div>
-         <div class="sidebar-brand-text mx-3">HSD</div>
+         <div class="sidebar-brand-text mx-3">HDS</div>
      </a>
      <hr class="sidebar-divider my-0">
      <li class="nav-item active">

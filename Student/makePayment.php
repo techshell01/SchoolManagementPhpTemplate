@@ -9,7 +9,6 @@ $statusMsg = "";
 if (isset($_POST['save'])) {
   $regId = $_SESSION['regId'];
   $studentName = $_SESSION['studentName'];
-    $last_name = $_SESSION['lastName'];
 
     $class = $_POST['class'];
     $session = $_POST['session'];
@@ -18,6 +17,8 @@ if (isset($_POST['save'])) {
     $month = $_POST['month'];
     $status = 'Pending';
     $dateCreated = date("Y-m-d H:i:s");
+
+
 
     $targetDir = "img/upload/";
     $originalFile = basename($_FILES["paymentImage"]["name"]);
@@ -30,9 +31,9 @@ if (isset($_POST['save'])) {
     if (in_array($fileType, $allowedTypes)) {
         if (move_uploaded_file($_FILES["paymentImage"]["tmp_name"], $targetFilePath)) {
             $query = mysqli_query($conn, "INSERT INTO payments 
-            (reg_num, first_name, last_name, class, session, amount, payment_type, month, status, photo,created_at)
+            (regId, studentName, class, session, amount, payment_type, month, status, photo,created_at)
             VALUES 
-            ('$regNum', '$first_name', '$last_name', '$class', '$session', '$amount', '$payment_type','$month', '$status', '$fileName', '$dateCreated')");
+            ('$regId', '$studentName', '$class', '$session', '$amount', '$payment_type','$month', '$status', '$fileName', '$dateCreated')");
 
             if ($query) {
                 $statusMsg = "<div class='alert alert-success'>Payment record created successfully!</div>";
@@ -201,14 +202,19 @@ if (isset($_POST['save'])) {
                         </div>
 
                         <div class="col-xl-4">
-                        <label class="form-control-label">Firstname<span class="text-danger ml-2">*</span></label>
+                        <label class="form-control-label">Student Name<span class="text-danger ml-2">*</span></label>
                         <input type="text" class="form-control" readonly value="<?php echo $_SESSION['studentName']; ?>">
                         </div>
-           
+
                         <div class="col-xl-4">
+                        <label class="form-control-label">Paymemt Type<span class="text-danger ml-2">*</span></label>
+                        <input type="text" class="form-control" name="payment_type" readonly value="Monthly" id="exampleInputFirstName">
+                        </div>
+           
+                        <!-- <div class="col-xl-4">
                         <label class="form-control-label">Lastname<span class="text-danger ml-2">*</span></label>
                         <input type="text" class="form-control" readonly value="<?php echo $_SESSION['lastName']; ?>">
-                        </div>
+                        </div> -->
                     </div>
                    
                      <div class="form-group row mb-3">
@@ -264,14 +270,29 @@ if (isset($_POST['save'])) {
                         <label class="form-control-label">Amount<span class="text-danger ml-2">*</span></label>
                           <input type="text" class="form-control" required name="amount" value="<?php echo $row['amount'];?>" id="exampleInputFirstName" >
                         </div>
+
+                        <div class="col-xl-4">
+                        <label class="form-control-label">Bank Name<span class="text-danger ml-2">*</span></label>
+                          <input type="text" class="form-control" required name="bank name" readonly value="Punjab National Bank" id="exampleInputFirstName" >
+                        </div>
+
+                        <div class="col-xl-4">
+                        <label class="form-control-label">Account Number<span class="text-danger ml-2">*</span></label>
+                          <input type="text" class="form-control" required name="ac number" readonly value="0564056000010" id="exampleInputFirstName" >
+                        </div>
+
+                        <div class="col-xl-4">
+                        <label class="form-control-label">RTGS/NEFT IFSC Code<span class="text-danger ml-2">*</span></label>
+                          <input type="text" class="form-control" required name="ifc code" readonly value="PUNB0056420" id="exampleInputFirstName" >
+                        </div>
                     </div>
 
 
                     <div class="form-group row mb-3">
-                        <div class="col-xl-4">
+                        <!-- <div class="col-xl-4">
                         <label class="form-control-label">Paymemt Type<span class="text-danger ml-2">*</span></label>
                         <input type="text" class="form-control" name="payment_type" readonly value="Monthly" id="exampleInputFirstName">
-                        </div>
+                        </div> -->
                     
                         <div class="col-xl-4">
                         <label for="month">Choose a month <span class="text-danger ml-2">*</span></label>
@@ -294,7 +315,7 @@ if (isset($_POST['save'])) {
                     </div>
                 </div>
                 <div class="col-xl-4">
-                    <img src="img/schoolQR.JPG" name="qr" style="height: 364px;width: 190px;"/>
+                    <img src="img/schoolQR.JPG" name="qr" style="height: 452px;width: 260px;"/>
                     </div>
                 </div>
 

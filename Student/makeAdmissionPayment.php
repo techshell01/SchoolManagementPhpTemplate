@@ -261,18 +261,37 @@ if (isset($_POST['save'])) {
                           }
                           ?>  
                         </div>
-
                         <div class="col-xl-4">
                         <label class="form-control-label">Amount<span class="text-danger ml-2">*</span></label>
                           <input type="text" class="form-control" required name="amount" value="<?php echo $row['amount'];?>" id="exampleInputFirstName" >
                         </div>
+
+                        <div class="col-xl-4">
+                        <label class="form-control-label">Bank Name<span class="text-danger ml-2">*</span></label>
+                          <input type="text" class="form-control" required name="bank name" readonly value="Punjab National Bank" id="exampleInputFirstName" >
+                        </div>
+
+                        <div class="col-xl-4">
+                        <label class="form-control-label">Account Number<span class="text-danger ml-2">*</span></label>
+                          <input type="text" class="form-control" required name="ac number" readonly value="0564056000010" id="exampleInputFirstName" >
+                        </div>
+
+                        <div class="col-xl-4">
+                        <label class="form-control-label">RTGS/NEFT IFSC Code<span class="text-danger ml-2">*</span></label>
+                          <input type="text" class="form-control" required name="ifc code" readonly value="PUNB0056420" id="exampleInputFirstName" >
+                        </div>
+
+                       
                     </div>
                 </div>
 
+
                 <div class="col-xl-4">
-                    <img src="img/schoolQR.JPG" name="qr" style="height: 364px;width: 190px;"/>
+                    <img src="img/schoolQR.JPG" name="qr" style="height: 452px;width: 260px;"/>
                     </div>
                 </div>
+
+                
 
               <div class="form-group row mb-3">
               <div class="col-xl-4"> <label class="form-control-label">Upload Payment receipt<span class="text-danger ml-2">*</span></label>
