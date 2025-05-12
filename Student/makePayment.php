@@ -14,11 +14,12 @@ if (isset($_POST['save'])) {
     $session = $_POST['session'];
     $amount = $_POST['amount'];
     $payment_type = $_POST['payment_type'];
+    $payment_mode = $_POST['payment_mode'];
     $month = $_POST['month'];
     $status = 'Pending';
     $dateCreated = date("Y-m-d H:i:s");
 
-
+    $payment_id = 'PAY' . uniqid();
 
     $targetDir = "img/upload/";
     $originalFile = basename($_FILES["paymentImage"]["name"]);
@@ -30,11 +31,11 @@ if (isset($_POST['save'])) {
 
     if (in_array($fileType, $allowedTypes)) {
         if (move_uploaded_file($_FILES["paymentImage"]["tmp_name"], $targetFilePath)) {
-            $query = mysqli_query($conn, "INSERT INTO payments 
-            (regId, studentName, class, session, amount, payment_type, month, status, photo,created_at)
-            VALUES 
-            ('$regId', '$studentName', '$class', '$session', '$amount', '$payment_type','$month', '$status', '$fileName', '$dateCreated')");
-
+          $sql = "INSERT INTO payments 
+          (payment_id,regId, studentName, class, session, amount, payment_type, status, payment_mode, photo, created_at)
+          VALUES 
+          ('$payment_id','$regId', '$studentName', '$class', '$session', '$amount', '$payment_type', '$status', '$payment_mode', '$fileName', '$dateCreated')";
+          $query = mysqli_query($conn, $sql);
             if ($query) {
                 $statusMsg = "<div class='alert alert-success'>Payment record created successfully!</div>";
             } else {
@@ -248,22 +249,14 @@ if (isset($_POST['save'])) {
                       <input type="text" class="form-control" required name="session" value="<?php echo $row['session'];?>" id="exampleInputFirstName" >
                         </div> -->
 
-                        <div class="col-xl-4">
-                          <label class="form-control-label">Select Class<span class="text-danger ml-2">*</span></label>
-                          <?php
-                          $qry = "SELECT * FROM tblsessionterm ORDER BY sessionName ASC";
-                          $result = $conn->query($qry);
-                          $num = $result->num_rows;		
-                          if ($num > 0){
-                              echo '<select required name="session" class="form-control mb-3">';
-                              echo '<option value="">--Select Session--</option>';
-                              while ($rows = $result->fetch_assoc()){
-                                  // Set the option value as className instead of Id
-                                  echo '<option value="'.$rows['sessionName'].'">'.$rows['sessionName'].'</option>';
-                              }
-                              echo '</select>';
-                          }
-                          ?>  
+                        <div class="form-group">
+                        <label class="font-weight" for="payment_mode" style="margin-left:10px" >Payment Mode<span class="text-danger ml-2">*</span></label>
+                        <select class="form-control" id="payment_mode" name="payment_mode" required style="width: 35vh; max-width: 350px; padding: 10px ; margin-left:10px">
+                          <option value="">-- Select Payment Mode --</option>
+                          <option value="UPI/QR"> UPI/QR</option>
+                          <option value="Account Transation"> Account Transation</option>
+                          <option value="Cash"> Cash</option>
+                        </select>
                         </div>
 
                         <div class="col-xl-4">
@@ -286,7 +279,7 @@ if (isset($_POST['save'])) {
                           <input type="text" class="form-control" required name="ifc code" readonly value="PUNB0056420" id="exampleInputFirstName" >
                         </div>
                     </div>
-
+                      
 
                     <div class="form-group row mb-3">
                         <!-- <div class="col-xl-4">
@@ -312,13 +305,13 @@ if (isset($_POST['save'])) {
                             <option value="December">December</option>
                           </select>
                         </div>
+                       
                     </div>
                 </div>
                 <div class="col-xl-4">
                     <img src="img/schoolQR.JPG" name="qr" style="height: 452px;width: 260px;"/>
                     </div>
                 </div>
-
               <div class="form-group row mb-3">
               <div class="col-xl-4"> <label class="form-control-label">Upload Payment receipt<span class="text-danger ml-2">*</span></label>
               <input type="file"  name="paymentImage" onChange="displayImage(this)" id="paymentImage" class="form-control"  class="form-control" required></div><div class="col-xl-4"><img src="img/logo/attnlg.jpg" onClick="triggerClick()" id="paymentDisplay"></div>

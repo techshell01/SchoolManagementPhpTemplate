@@ -92,14 +92,17 @@ $regId = $_SESSION['regId'];
                         <th>Payment Type</th>
                         <th>Amount</th>
                         <th>Date</th>
+                        <th>Payment Mode</th>
                         <th>Status</th>
+                        <th>Action</th>
                       </tr>
                     </thead>
                     
                     <tbody>
 
                   <?php
-                     $query = "SELECT studentName, payment_type, amount, created_at, status FROM payments WHERE regId = '$regId' ORDER BY created_at DESC";
+                    //  $query = "SELECT studentName, payment_type, amount, created_at, status FROM payments WHERE regId = '$regId' ORDER BY created_at DESC";
+                    $query = "SELECT payment_id, studentName,class,payment_type,payment_mode,amount, created_at, status FROM payments WHERE regId = '$regId' ORDER BY created_at DESC";
 
                       $rs = $conn->query($query);
                       $num = $rs->num_rows;
@@ -117,7 +120,13 @@ $regId = $_SESSION['regId'];
                                 <td>".$rows['payment_type']."</td>
                                 <td>".$rows['amount']."</td>
                                 <td>".$rows['created_at']."</td>
+                                <td>".$rows['payment_mode']."</td>
                                 <td>".$rows['status']."</td>
+                                <td>
+                                    <a href='generateReceipt.php?payment_id=".$rows['payment_id']."' target='_blank' class='btn btn-sm btn-light rounded-pill' title='Download Receipt'>
+                                        <i class='fas fa-download'></i> <!-- Download icon -->
+                                    </a>
+                                </td>
                               </tr>";
                           }
                       }
