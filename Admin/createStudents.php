@@ -370,7 +370,7 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
                       <script>
                         Swal.fire({
                                 title: 'Success!',
-                                text: 'Form submitted successfully DAta.',
+                                text: 'Form submitted successfully Data.',
                                 icon: 'success',
                                 confirmButtonText: 'OK'
                             }).then(() => {

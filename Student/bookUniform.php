@@ -1,6 +1,8 @@
 
 <?php 
 error_reporting(0);
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
@@ -11,14 +13,9 @@ if (isset($_POST['save'])) {
     $studentName = $_SESSION['studentName'];
     // $last_name = $_SESSION['lastName'];
 
-    $class = $_POST['class'];
+   
     $session = $_POST['session'];
-    $amount = $_POST['amount'];
-    $payment_type = $_POST['payment_type'];
-    $month = $_POST['month'];
-    $payment_mode = $_POST['payment_mode'];
-    $status = 'Pending';
-    $dateCreated = date("Y-m-d H:i:s");
+    
 
 
 
@@ -37,20 +34,20 @@ if (isset($_POST['save'])) {
 
     if (in_array($fileType, $allowedTypes)) {
         if (move_uploaded_file($_FILES["paymentImage"]["tmp_name"], $targetFilePath)) {
-            $sql = "INSERT INTO payments 
-            (payment_id,regId, studentName, class, session, amount, payment_type, status, payment_mode, photo, created_at)
-            VALUES 
-            ('$payment_id','$regId', '$studentName', '$class', '$session', '$amount', '$payment_type', '$status', '$payment_mode', '$fileName', '$dateCreated')";
-            $query = mysqli_query($conn, $sql);
-            // echo $sql;
-            // die();
-            if ($query) {
-                $statusMsg = "<div class='alert alert-success'>Payment record created successfully!</div>";
-            } else {
-                $statusMsg = "<div class='alert alert-danger'>Database insert failed!</div>";
-                // $statusMsg = "<div class='alert alert-danger'>Database insert failed! Error: " . mysqli_error($conn) . "</div>";
+            // $sql = "INSERT INTO payments 
+            // (payment_id,regId, studentName, class, session, amount, payment_type, status, payment_mode, photo, created_at)
+            // VALUES 
+            // ('$payment_id','$regId', '$studentName', '$class', '$session', '$amount', '$payment_type', '$status', '$payment_mode', '$fileName', '$dateCreated')";
+            // $query = mysqli_query($conn, $sql);
+            // // echo $sql;
+            // // die();
+            // if ($query) {
+            //     $statusMsg = "<div class='alert alert-success'>Payment record created successfully!</div>";
+            // } else {
+            //     $statusMsg = "<div class='alert alert-danger'>Database insert failed!</div>";
+            //     // $statusMsg = "<div class='alert alert-danger'>Database insert failed! Error: " . mysqli_error($conn) . "</div>";
 
-            }
+            // }
         } else {
             $statusMsg = "<div class='alert alert-danger'>File upload failed!</div>";
         }
@@ -262,9 +259,12 @@ while ($row = $result2->fetch_assoc()) {
     <!-- Select Class -->
     <div>
         <label for="class_selector" style="font-weight: 500; font-size: 16px;">Select Class</label><br>
-        <select id="class_selector" onchange="populateBookList()"
+        <select id="class_selector" onchange="updateBookList()"
             style="width: 220px; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 5px;">
             <option value="">-- Select Class --</option>
+               <option value="Nursery">Nursery</option>
+               <option value="LKG">LKG</option>
+               <option value="UKG">UKG</option>
             <?php for ($i = 1; $i <= 10; $i++): ?>
                 <option value="Class <?= $i ?>">Class <?= $i ?></option>
             <?php endfor; ?>
@@ -277,11 +277,19 @@ while ($row = $result2->fetch_assoc()) {
         <select id="book_list_selector" onchange="renderData()"
             style="width: 220px; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 5px;">
             <option value="">-- Select Book List --</option>
+                   
+        <option value="nursery_A">Nursery - Book List A</option>
+        <option value="nursery_B">Nursery - Book List B</option>
+        <option value="lkg_A">LKG - Book List A</option>
+        <option value="lkg_B">LKG - Book List B</option>
+        <option value="ukg_A">UKG - Book List A</option>
+        <option value="ukg_B">UKG - Book List B</option>
             <?php for ($i = 1; $i <= 10; $i++): ?>
                 <option value="class<?= $i ?>_A">Class <?= $i ?> - Book List A</option>
                 <option value="class<?= $i ?>_B">Class <?= $i ?> - Book List B</option>
             <?php endfor; ?>
         </select>
+       
     </div>
 </div>
 
@@ -330,29 +338,36 @@ while ($row = $result2->fetch_assoc()) {
     </div>
 </div>
 
-<!-- Grand Total -->
-<!-- <h4 style="margin-left: 20px; margin-top: 10px;">Grand Total: ₹<span id="total_amount">0</span></h4> -->
-
 <script>
-const bookData = <?php echo json_encode($bookData); ?>;
-const notebookData = <?php echo json_encode($notebookData); ?>;
+  const bookData = <?php echo json_encode($bookData); ?>;
+  const notebookData = <?php echo json_encode($notebookData); ?>;
 
+  function updateBookList() {
+    const classSelector = document.getElementById("class_selector");
+    const selectedClass = classSelector.value;
+    const bookListSelector = document.getElementById("book_list_selector");
 
-function populateBookList() {
-    const classVal = document.getElementById("class_selector").value;
-    if (!classVal) return;
+    // Reset book list options
+    bookListSelector.innerHTML = '<option value="">-- Select Book List --</option>';
 
-    const classNumber = classVal.split(' ')[1];
-    const selector = document.getElementById("book_list_selector");
-    selector.value = "";
-    selector.innerHTML = `
-        <option value="">-- Select Book List --</option>
-        <option value="class${classNumber}_A">Class ${classNumber} - Book List A</option>
-        <option value="class${classNumber}_B">Class ${classNumber} - Book List B</option>
-    `;
-}
+    if (selectedClass !== "") {
+      const optionA = document.createElement("option");
+      optionA.value = selectedClass.toLowerCase().replace(" ", "") + "_A";
+      optionA.text = selectedClass + " - Book List A";
 
-function renderData() {
+      const optionB = document.createElement("option");
+      optionB.value = selectedClass.toLowerCase().replace(" ", "") + "_B";
+      optionB.text = selectedClass + " - Book List B";
+
+      bookListSelector.appendChild(optionA);
+      bookListSelector.appendChild(optionB);
+    }
+
+    // Clear previous data
+    clearRenderedData();
+  }
+
+  function renderData() {
     const selectedCode = document.getElementById("book_list_selector").value;
 
     // Books
@@ -360,8 +375,8 @@ function renderData() {
     let bookRows = '';
     let bookTotal = 0;
     books.forEach(book => {
-        bookRows += `<tr><td>${book.book_name}</td><td>₹${book.amount}</td></tr>`;
-        bookTotal += parseFloat(book.amount);
+      bookRows += `<tr><td>${book.book_name}</td><td>₹${book.amount}</td></tr>`;
+      bookTotal += parseFloat(book.amount);
     });
     document.querySelector("#book_table tbody").innerHTML = bookRows;
     document.getElementById("book_total").textContent = bookTotal;
@@ -371,22 +386,31 @@ function renderData() {
     let noteRows = '';
     let noteTotal = 0;
     notes.forEach(note => {
-        noteRows += `<tr>
-            <td>${note.subject}</td>
-            <td>${note.quantity}</td>
-            <td>${note.details}</td>
-            <td>₹${note.amount}</td>
-        </tr>`;
-        noteTotal += parseFloat(note.amount);
+      noteRows += `<tr>
+        <td>${note.subject}</td>
+        <td>${note.quantity}</td>
+        <td>${note.details}</td>
+        <td>₹${note.amount}</td>
+      </tr>`;
+      noteTotal += parseFloat(note.amount);
     });
     document.querySelector("#notebook_table tbody").innerHTML = noteRows;
     document.getElementById("notebook_total").textContent = noteTotal;
 
     // Grand Total
-    document.getElementById("total_amount").textContent = bookTotal + noteTotal ;
-}
+    document.getElementById("total_amount").textContent = bookTotal + noteTotal;
+  }
+
+  function clearRenderedData() {
+    document.querySelector("#book_table tbody").innerHTML = "";
+    document.getElementById("book_total").textContent = "0";
+    document.querySelector("#notebook_table tbody").innerHTML = "";
+    document.getElementById("notebook_total").textContent = "0";
+    document.getElementById("total_amount").textContent = "0";
+  }
 </script>
-                       
+
+  
                         </div>
                         
  <!-- Torso Wear    -->
