@@ -280,9 +280,20 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
           unlink($photoPath);
       }
 
-      echo "<script type='text/javascript'>
-          window.location = ('createStudents.php');
-      </script>";
+      // echo "<script type='text/javascript'>
+      //     window.location = ('createStudents.php');
+      // </script>";
+      echo "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted',
+                    text: 'Class teacher deleted successfully!'
+                }).then(function() {
+                    window.location = 'createClassTeacher.php';
+                });
+            });
+        </script>";
   } else {
       $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error occurred while deleting!</div>";
   }
@@ -538,11 +549,6 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
 </form>
 
 
-
-
-
-
-
                 </div>
               </div>
 
@@ -610,7 +616,7 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
               <td>{$row['commute']}</td>
             <td>{$row['dateCreated']}</td>
             <td><a href='?action=edit&Id={$row['Id']}'><i class='fas fa-fw fa-edit'></i></a></td>
-            <td><a href='?action=delete&Id={$row['Id']}' onclick=\"return confirm('Are you sure you want to delete this student?');\"><i class='fas fa-fw fa-trash'></i></a></td>
+            <td><a href='?action=delete&Id={$row['Id']}');\"><i class='fas fa-fw fa-trash'></i></a></td>
           </tr>";
       }
     } else {

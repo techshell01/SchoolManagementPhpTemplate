@@ -57,11 +57,36 @@ if(isset($_POST['save'])){
         
         $query = mysqli_query($conn, $sql);
   
+        // if ($query) {
+        //     $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Created Successfully!</div>";
+        // } else {
+        //     $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error occurred while inserting!</div>";
+        // }
+
         if ($query) {
-            $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Created Successfully!</div>";
-        } else {
-            $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error occurred while inserting!</div>";
-        }
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Class teacher created successfully!'
+            }).then(function() {
+                window.location = 'createClassTeacher.php';
+            });
+        });
+    </script>";
+} else {
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while inserting.'
+            });
+        });
+    </script>";
+}
+
     }
 }
 
@@ -100,16 +125,30 @@ if(isset($_POST['save'])){
     $query=mysqli_query($conn,"update tblclassteacher set firstName='$firstName', lastName='$lastName',
     emailAddress='$emailAddress', address='$address',qualification='$qualification',password='$password',phoneNo='$phoneNo', classId='$classId',classArmId='$classArmId'
     where Id='$Id'");
-            if ($query) {
-                
-                echo "<script type = \"text/javascript\">
-                window.location = (\"createClassTeacher.php\")
-                </script>"; 
-            }
-            else
-            {
-                $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error Occurred!</div>";
-            }
+           if ($query) {
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Updated',
+                text: 'Class teacher updated successfully!'
+            }).then(function() {
+                window.location = 'createClassTeacher.php';
+            });
+        });
+    </script>";
+} else {
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while updating.'
+            });
+        });
+    </script>";
+}
+
         }
     }
 
@@ -126,16 +165,19 @@ if(isset($_POST['save'])){
         if ($query == TRUE) {
 
             $qu=mysqli_query($conn,"update tblclassarms set isAssigned='0' where Id ='$classArmId'");
-            if ($qu) {
-                
-                 echo "<script type = \"text/javascript\">
-                window.location = (\"createClassTeacher.php\")
-                </script>"; 
-            }
-            else
-            {
-                $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error Occurred!</div>";
-            }
+               if ($qu) {
+        echo "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted',
+                    text: 'Class teacher deleted successfully!'
+                }).then(function() {
+                    window.location = 'createClassTeacher.php';
+                });
+            });
+        </script>";
+    }
         }
         else{
 
@@ -216,7 +258,7 @@ if(isset($_POST['save'])){
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">Create Class Teachers</h6>
-                    <?php echo $statusMsg; ?>
+                    <!-- <?php echo $statusMsg; ?> -->
                 </div>
                 <div class="card-body">
                   <form method="post" enctype="multipart/form-data">
@@ -400,6 +442,7 @@ if(isset($_POST['save'])){
   <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
   </a>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script src="../vendor/jquery/jquery.min.js"></script>
   <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

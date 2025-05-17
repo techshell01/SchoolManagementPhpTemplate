@@ -37,7 +37,19 @@ if (isset($_POST['save'])) {
           ('$payment_id','$regId', '$studentName', '$class', '$session', '$amount', '$payment_type', '$status', '$payment_mode', '$fileName', '$dateCreated')";
           $query = mysqli_query($conn, $sql);
             if ($query) {
-                $statusMsg = "<div class='alert alert-success'>Payment record created successfully!</div>";
+              $statusMsg = "
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'success',
+            title: 'Payment Submitted',
+            text: 'Your payment has been successfully submitted!',
+            confirmButtonText: 'OK'
+        });
+    });
+</script>";
+
+                // $statusMsg = "<div class='alert alert-success'>Payment record created successfully!</div>";
             } else {
                 $statusMsg = "<div class='alert alert-danger'>Database insert failed!</div>";
             }
@@ -190,6 +202,8 @@ if (isset($_POST['save'])) {
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">Pay Monthly Fees</h6>
                     <?php echo $statusMsg; ?>
+                    
+
                 </div>
                 <div class="card-body">
                 <form method="post" enctype="multipart/form-data">
@@ -343,6 +357,7 @@ if (isset($_POST['save'])) {
   <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
   </a>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script src="../vendor/jquery/jquery.min.js"></script>
   <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

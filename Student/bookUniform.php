@@ -230,7 +230,7 @@ while ($row = $result->fetch_assoc()) {
     $code = $row['class_code'];
     $bookData[$code][] = [
         'book_name' => $row['book_name'],
-        'amount' => $row['amount']
+        'amount' => $row['price']
     ];
 }
 
@@ -247,168 +247,173 @@ while ($row = $result2->fetch_assoc()) {
     $notebookData[$code][] = [
         'subject' => $row['subject'],
         'quantity' => $row['quantity'],
-        'details' => $row['details'],
-        'amount' => $row['amount']
+        'details' => $row['notebook_type'],
+        'amount' => $row['price']
     ];
 }
 ?>
 
 <!-- HTML -->
 <!-- Selectors Section -->
-<div style="display: flex; gap: 30px; margin: 20px;">
-    <!-- Select Class -->
-    <div>
-        <label for="class_selector" style="font-weight: 500; font-size: 16px;">Select Class</label><br>
-        <select id="class_selector" onchange="updateBookList()"
-            style="width: 220px; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 5px;">
-            <option value="">-- Select Class --</option>
-               <option value="Nursery">Nursery</option>
-               <option value="LKG">LKG</option>
-               <option value="UKG">UKG</option>
-            <?php for ($i = 1; $i <= 10; $i++): ?>
-                <option value="Class <?= $i ?>">Class <?= $i ?></option>
-            <?php endfor; ?>
-        </select>
+    <div style="display: flex; gap: 30px; margin: 20px;">
+        <!-- Select Class -->
+        <div>
+            <label for="class_selector" style="font-weight: 500; font-size: 16px;">Select Class</label><br>
+            <select id="class_selector" onchange="updateBookList()"
+                style="width: 220px; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 5px;">
+                <option value="">-- Select Class --</option>
+                <option value="Nursery">Nursery</option>
+                <option value="LKG">LKG</option>
+                <option value="UKG">UKG</option>
+                <?php for ($i = 1; $i <= 10; $i++): ?>
+                    <option value="Class <?= $i ?>">Class <?= $i ?></option>
+                <?php endfor; ?>
+            </select>
+        </div>
+
+        <!-- Select Book List -->
+        <div>
+            <label for="book_list_selector" style="font-weight: 500; font-size: 16px;">Select Book List</label><br>
+            <select id="book_list_selector" onchange="renderData()"
+                style="width: 220px; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 5px;">
+                <option value="">-- Select Book List --</option>
+                    
+            <option value="nursery_A">Nursery - Book List A</option>
+            <option value="nursery_B">Nursery - Book List B</option>
+            <option value="lkg_A">LKG - Book List A</option>
+            <option value="lkg_B">LKG - Book List B</option>
+            <option value="ukg_A">UKG - Book List A</option>
+            <option value="ukg_B">UKG - Book List B</option>
+                <?php for ($i = 1; $i <= 10; $i++): ?>
+                    <option value="class<?= $i ?>_A">Class <?= $i ?> - Book List A</option>
+                    <option value="class<?= $i ?>_B">Class <?= $i ?> - Book List B</option>
+                <?php endfor; ?>
+            </select>
+        
+        </div>
     </div>
 
-    <!-- Select Book List -->
-    <div>
-        <label for="book_list_selector" style="font-weight: 500; font-size: 16px;">Select Book List</label><br>
-        <select id="book_list_selector" onchange="renderData()"
-            style="width: 220px; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 5px;">
-            <option value="">-- Select Book List --</option>
-                   
-        <option value="nursery_A">Nursery - Book List A</option>
-        <option value="nursery_B">Nursery - Book List B</option>
-        <option value="lkg_A">LKG - Book List A</option>
-        <option value="lkg_B">LKG - Book List B</option>
-        <option value="ukg_A">UKG - Book List A</option>
-        <option value="ukg_B">UKG - Book List B</option>
-            <?php for ($i = 1; $i <= 10; $i++): ?>
-                <option value="class<?= $i ?>_A">Class <?= $i ?> - Book List A</option>
-                <option value="class<?= $i ?>_B">Class <?= $i ?> - Book List B</option>
-            <?php endfor; ?>
-        </select>
-       
+    <!-- Tables Section -->
+    <div style="display: flex; gap: 40px; margin: 20px;">
+        <!-- Book List Table -->
+        <div>
+            <h4 style="margin-bottom: 10px;">Book List</h4>
+            <table id="book_table" class="table table-bordered" style="border-collapse: collapse; width: 300px; font-size: 15px;">
+                <thead>
+                    <tr>
+                        <th style="background-color: #f0f0f0; padding: 8px; border: 1px solid #ccc;">Book Name</th>
+                        <th style="background-color: #f0f0f0; padding: 8px; border: 1px solid #ccc;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <th style="padding: 8px; border: 1px solid #ccc;">Total</th>
+                        <th style="padding: 8px; border: 1px solid #ccc;">₹<span id="book_total">0</span></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        
+        
+        <!-- Notebook List Table -->
+        <div>
+            <h4 style="margin-bottom: 10px;">Notebook List</h4>
+            <table id="notebook_table" class="table table-bordered" style="border-collapse: collapse; width: 380px; font-size: 15px;">
+                <thead>
+                    <tr>
+                        <th style="background-color: #f0f0f0; padding: 8px; border: 1px solid #ccc;">Subject</th>
+                        <th style="background-color: #f0f0f0; padding: 8px; border: 1px solid #ccc;">Qty</th>
+                        <th style="background-color: #f0f0f0; padding: 8px; border: 1px solid #ccc;">Details</th>
+                        <th style="background-color: #f0f0f0; padding: 8px; border: 1px solid #ccc;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3" style="padding: 8px; border: 1px solid #ccc;">Total</th>
+                        <th style="padding: 8px; border: 1px solid #ccc;">₹<span id="notebook_total">0</span></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
     </div>
-</div>
 
-<!-- Tables Section -->
-<div style="display: flex; gap: 40px; margin: 20px;">
-    <!-- Book List Table -->
-    <div>
-        <h4 style="margin-bottom: 10px;">Book List</h4>
-        <table id="book_table" class="table table-bordered" style="border-collapse: collapse; width: 300px; font-size: 15px;">
-            <thead>
-                <tr>
-                    <th style="background-color: #f0f0f0; padding: 8px; border: 1px solid #ccc;">Book Name</th>
-                    <th style="background-color: #f0f0f0; padding: 8px; border: 1px solid #ccc;">Amount</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-            <tfoot>
-                <tr>
-                    <th style="padding: 8px; border: 1px solid #ccc;">Total</th>
-                    <th style="padding: 8px; border: 1px solid #ccc;">₹<span id="book_total">0</span></th>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
+    <script>
+    const bookData = <?php echo json_encode($bookData); ?>;
+    const notebookData = <?php echo json_encode($notebookData); ?>;
 
-    <!-- Notebook List Table -->
-    <div>
-        <h4 style="margin-bottom: 10px;">Notebook List</h4>
-        <table id="notebook_table" class="table table-bordered" style="border-collapse: collapse; width: 380px; font-size: 15px;">
-            <thead>
-                <tr>
-                    <th style="background-color: #f0f0f0; padding: 8px; border: 1px solid #ccc;">Subject</th>
-                    <th style="background-color: #f0f0f0; padding: 8px; border: 1px solid #ccc;">Qty</th>
-                    <th style="background-color: #f0f0f0; padding: 8px; border: 1px solid #ccc;">Details</th>
-                    <th style="background-color: #f0f0f0; padding: 8px; border: 1px solid #ccc;">Amount</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="3" style="padding: 8px; border: 1px solid #ccc;">Total</th>
-                    <th style="padding: 8px; border: 1px solid #ccc;">₹<span id="notebook_total">0</span></th>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
-</div>
+    console.log(bookData);
+    console.log(notebookData);
 
-<script>
-  const bookData = <?php echo json_encode($bookData); ?>;
-  const notebookData = <?php echo json_encode($notebookData); ?>;
 
-  function updateBookList() {
-    const classSelector = document.getElementById("class_selector");
-    const selectedClass = classSelector.value;
-    const bookListSelector = document.getElementById("book_list_selector");
+    function updateBookList() {
+        const classSelector = document.getElementById("class_selector");
+        const selectedClass = classSelector.value;
+        const bookListSelector = document.getElementById("book_list_selector");
 
-    // Reset book list options
-    bookListSelector.innerHTML = '<option value="">-- Select Book List --</option>';
+        // Reset book list options
+        bookListSelector.innerHTML = '<option value="">-- Select Book List --</option>';
 
-    if (selectedClass !== "") {
-      const optionA = document.createElement("option");
-      optionA.value = selectedClass.toLowerCase().replace(" ", "") + "_A";
-      optionA.text = selectedClass + " - Book List A";
+        if (selectedClass !== "") {
+        const optionA = document.createElement("option");
+        optionA.value = selectedClass.toLowerCase().replace(" ", "") + "_A";
+        optionA.text = selectedClass + " - Book List A";
 
-      const optionB = document.createElement("option");
-      optionB.value = selectedClass.toLowerCase().replace(" ", "") + "_B";
-      optionB.text = selectedClass + " - Book List B";
+        const optionB = document.createElement("option");
+        optionB.value = selectedClass.toLowerCase().replace(" ", "") + "_B";
+        optionB.text = selectedClass + " - Book List B";
 
-      bookListSelector.appendChild(optionA);
-      bookListSelector.appendChild(optionB);
+        bookListSelector.appendChild(optionA);
+        bookListSelector.appendChild(optionB);
+        }
+
+        // Clear previous data
+        clearRenderedData();
     }
 
-    // Clear previous data
-    clearRenderedData();
-  }
+    function renderData() {
+        const selectedCode = document.getElementById("book_list_selector").value;
 
-  function renderData() {
-    const selectedCode = document.getElementById("book_list_selector").value;
+        // Books
+        const books = bookData[selectedCode] || [];
+        let bookRows = '';
+        let bookTotal = 0;
+        books.forEach(book => {
+        bookRows += `<tr><td>${book.book_name}</td><td>₹${book.amount}</td></tr>`;
+        bookTotal += parseFloat(book.amount);
+        });
+        document.querySelector("#book_table tbody").innerHTML = bookRows;
+        document.getElementById("book_total").textContent = bookTotal;
 
-    // Books
-    const books = bookData[selectedCode] || [];
-    let bookRows = '';
-    let bookTotal = 0;
-    books.forEach(book => {
-      bookRows += `<tr><td>${book.book_name}</td><td>₹${book.amount}</td></tr>`;
-      bookTotal += parseFloat(book.amount);
-    });
-    document.querySelector("#book_table tbody").innerHTML = bookRows;
-    document.getElementById("book_total").textContent = bookTotal;
+        // Notebooks
+        const notes = notebookData[selectedCode] || [];
+        let noteRows = '';
+        let noteTotal = 0;
+        notes.forEach(note => {
+        noteRows += `<tr>
+            <td>${note.subject}</td>
+            <td>${note.quantity}</td>
+            <td>${note.details}</td>
+            <td>₹${note.amount}</td>
+        </tr>`;
+        noteTotal += parseFloat(note.amount);
+        });
+        document.querySelector("#notebook_table tbody").innerHTML = noteRows;
+        document.getElementById("notebook_total").textContent = noteTotal;
 
-    // Notebooks
-    const notes = notebookData[selectedCode] || [];
-    let noteRows = '';
-    let noteTotal = 0;
-    notes.forEach(note => {
-      noteRows += `<tr>
-        <td>${note.subject}</td>
-        <td>${note.quantity}</td>
-        <td>${note.details}</td>
-        <td>₹${note.amount}</td>
-      </tr>`;
-      noteTotal += parseFloat(note.amount);
-    });
-    document.querySelector("#notebook_table tbody").innerHTML = noteRows;
-    document.getElementById("notebook_total").textContent = noteTotal;
+        // Grand Total
+        document.getElementById("total_amount").textContent = bookTotal + noteTotal;
+    }
 
-    // Grand Total
-    document.getElementById("total_amount").textContent = bookTotal + noteTotal;
-  }
-
-  function clearRenderedData() {
-    document.querySelector("#book_table tbody").innerHTML = "";
-    document.getElementById("book_total").textContent = "0";
-    document.querySelector("#notebook_table tbody").innerHTML = "";
-    document.getElementById("notebook_total").textContent = "0";
-    document.getElementById("total_amount").textContent = "0";
-  }
-</script>
+    function clearRenderedData() {
+        document.querySelector("#book_table tbody").innerHTML = "";
+        document.getElementById("book_total").textContent = "0";
+        document.querySelector("#notebook_table tbody").innerHTML = "";
+        document.getElementById("notebook_total").textContent = "0";
+        document.getElementById("total_amount").textContent = "0";
+    }
+    </script>
 
   
                         </div>
